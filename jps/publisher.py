@@ -5,6 +5,8 @@ class Publisher(object):
 
     def __init__(self, topic_name, master_host='localhost',
                  master_pub_port=54321):
+        if topic_name.count(' '):
+            raise Exception('you can\'t use " " for topic_name')
         self._port = master_pub_port
         context = zmq.Context()
         self._socket = context.socket(zmq.PUB)
