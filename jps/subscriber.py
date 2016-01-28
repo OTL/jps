@@ -20,7 +20,9 @@ class Subscriber(object):
 
     def _callback(self, raw_msg):
         topic, _, msg = raw_msg.partition(' ')
-        if topic == self._topic:
+        if self._topic == '':
+            self._user_callback(raw_msg)
+        elif topic == self._topic:
             self._user_callback(msg)
 
     def spin_once(self):
