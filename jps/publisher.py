@@ -15,7 +15,11 @@ class Publisher(object):
         self._topic = topic_name
 
     def publish(self, json_msg):
-        msg = '{topic} {json}'.format(topic=self._topic, json=json_msg)
+        if self._topic == '':
+            # special case for publish everything
+            msg = json_msg
+        else:
+            msg = '{topic} {json}'.format(topic=self._topic, json=json_msg)
         self._socket.send(msg)
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 import argparse
 import jps
+import os
 import sys
 import time
 
@@ -27,6 +28,7 @@ def echo(topic_name):
 
 def show_list(timeout_in_sec):
     class TopicNameStore(object):
+
         def __init__(self):
             self._topic_names = set()
 
@@ -43,21 +45,71 @@ def show_list(timeout_in_sec):
     print store.get_topic_names()
 
 
+def record(file_path, topic_names=[]):
+    class TopicRecorder(object):
+
+        def __init__(self, file_path, topic_names):
+            self._topic_names = topic_names
+            self._file_path = file_path
+            self._output = open(self._file_path, 'w')
+
+        def callback(self, raw_msg):
+            topic, _, msg = raw_msg.partition(' ')
+            if not self._topic_names or topic in self._topic_names:
+                self._output.write('{time:.9f} {data}\n'.format(time=time.time(),
+                                                                data=raw_msg))
+
+        def close(self):
+            self._output.close()
+
+    store = TopicRecorder(file_path, topic_names)
+    sub = jps.Subscriber('', store.callback)
+    sub.spin()
+    store.close()
+
+
+def play(file_path):
+    pub = jps.Publisher('')
+    last_time = None
+    for line in open(file_path, 'r'):
+        time_str, _, raw_msg = line.partition(' ')
+        publish_time = float(time_str)
+        if last_time is not None:
+            time.sleep(publish_time - last_time)
+        pub.publish(raw_msg.rstrip())
+        last_time = publish_time
+
+
 def topic_command():
     parser = argparse.ArgumentParser(description='json pub/sub tool')
     command_parsers = parser.add_subparsers(dest='command', help='command')
 
-    pub_parser = command_parsers.add_parser('pub', help='publish topic from command line')
+    pub_parser = command_parsers.add_parser(
+        'pub', help='publish topic from command line')
     pub_parser.add_argument('topic_name', type=str, help='name of topic')
-    pub_parser.add_argument('data', type=str, help='json string data to be published')
+    pub_parser.add_argument(
+        'data', type=str, help='json string data to be published')
     pub_parser.add_argument('--repeat', '-r', help='repeat in hz', type=float)
 
     echo_parser = command_parsers.add_parser('echo', help='show topic data')
     echo_parser.add_argument('topic_name', type=str, help='name of topic')
 
     list_parser = command_parsers.add_parser('list', help='show topic list')
-    list_parser.add_argument('--time_out', '-t', help='timeout in sec', type=float,
+    list_parser.add_argument('--timeout', '-t', help='timeout in sec', type=float,
                              default=1.0)
+
+    record_parser = command_parsers.add_parser(
+        'record', help='record topic data')
+    record_parser.add_argument('topic_names', nargs='*',
+                               help='topic names to be recorded', type=str)
+    record_parser.add_argument('--file', '-f', help='output file name (default: record.jps.txt)',
+                               type=str, default='record.jps.txt')
+
+    play_parser = command_parsers.add_parser(
+        'play', help='play recorded topic data')
+    play_parser.add_argument('--file', '-f', help='input file name (default: record.jps.txt)',
+                             type=str, default='record.jps.txt')
+
     args = parser.parse_args()
 
     if args.command == 'pub':
@@ -65,6 +117,10 @@ def topic_command():
     elif args.command == 'echo':
         echo(args.topic_name)
     elif args.command == 'list':
-        show_list(args.time_out)
+        show_list(args.timeout)
+    elif args.command == 'record':
+        record(args.file, args.topic_names)
+    elif args.command == 'play':
+        play(args.file)
     else:
         parser.print_help()
