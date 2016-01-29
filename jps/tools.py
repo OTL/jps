@@ -6,6 +6,12 @@ import time
 
 
 def pub(topic_name, json_msg, repeat_rate=None):
+    '''publishes the data to the topic
+
+    :param topic_name: name of the topic
+    :param json_msg: data to be published
+    :param repeat_rate: if None, publishes once. if not None, it is used as [Hz].
+    '''
     pub = jps.Publisher(topic_name)
     time.sleep(0.1)
     if repeat_rate is None:
@@ -20,6 +26,8 @@ def pub(topic_name, json_msg, repeat_rate=None):
 
 
 def echo(topic_name):
+    '''print the data for the given topic forever
+    '''
     def callback(msg):
         print msg
     sub = jps.Subscriber(topic_name, callback)
@@ -27,6 +35,8 @@ def echo(topic_name):
 
 
 def show_list(timeout_in_sec):
+    '''get the name list of the topics, and print it
+    '''
     class TopicNameStore(object):
 
         def __init__(self):
@@ -46,6 +56,8 @@ def show_list(timeout_in_sec):
 
 
 def record(file_path, topic_names=[]):
+    '''record the topic data to the file
+    '''
     class TopicRecorder(object):
 
         def __init__(self, file_path, topic_names):
@@ -69,6 +81,8 @@ def record(file_path, topic_names=[]):
 
 
 def play(file_path):
+    '''replay the recorded data by record()
+    '''
     pub = jps.Publisher('')
     last_time = None
     for line in open(file_path, 'r'):
@@ -81,6 +95,8 @@ def play(file_path):
 
 
 def topic_command():
+    '''command line tool for jps
+    '''
     parser = argparse.ArgumentParser(description='json pub/sub tool')
     command_parsers = parser.add_subparsers(dest='command', help='command')
 

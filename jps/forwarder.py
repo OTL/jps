@@ -2,6 +2,11 @@ import zmq
 
 
 def main(sub_port=54321, pub_port=54320):
+    '''main of forwarder
+
+    :param sub_port: port for subscribers
+    :param pub_port: port for publishers
+    '''
     try:
         context = zmq.Context(1)
         frontend = context.socket(zmq.SUB)

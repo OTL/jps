@@ -3,6 +3,20 @@ import time
 
 
 class Subscriber(object):
+    '''Subscribe the topic and call the callback function
+
+    Example:
+
+    >>> def callback(msg):
+    ...   print msg
+    ...
+    >>> sub = jps.Subscriber('topic_name', callback)
+    >>> sub.spin()
+
+    :param topic_name: topic name
+    :param master_host: host name of publisher/forwarder
+    :param master_sub_port: port of publisher/forwarder
+    '''
 
     def __init__(self, topic_name, callback, master_host='localhost',
                  master_sub_port=54320):
@@ -26,6 +40,8 @@ class Subscriber(object):
             self._user_callback(msg)
 
     def spin_once(self):
+        '''Read the queued data and call the callback for them.
+        '''
         # parse all data
         while True:
             socks = dict(self._poller.poll(10))
@@ -36,6 +52,7 @@ class Subscriber(object):
                 return
 
     def spin(self):
+        '''call spin_once() forever'''
         try:
             while True:
                 self.spin_once()
