@@ -13,7 +13,7 @@ def main(sub_port=54321, pub_port=54320):
         backend = context.socket(zmq.PUB)
 
         frontend.bind('tcp://*:{sub_port}'.format(sub_port=sub_port))
-        frontend.setsockopt(zmq.SUBSCRIBE, "")
+        frontend.setsockopt(zmq.SUBSCRIBE, b'')
         # Socket facing services
         backend.bind('tcp://*:{pub_port}'.format(pub_port=pub_port))
         zmq.device(zmq.FORWARDER, frontend, backend)
