@@ -49,7 +49,7 @@ see ``-h`` option for more detail. ::
 
 jps_topic echo
 ----------------
-**echo** command prints json text data.
+**echo** command prints json text data. ::
 
   $ jps_topic echo -h
   usage: jps_topic echo [-h] [--num NUM] topic_name

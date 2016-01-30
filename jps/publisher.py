@@ -28,12 +28,12 @@ class Publisher(object):
     def publish(self, json_msg):
         '''Publish json_msg to the topic
 
-        note:: If you publishes just after creating Publisher instance, it will causes
-               lost of message. You have to add sleep if you just want to publish once.
-
-               >>> pub = jps.Publisher('topic')
-               >>> time.sleep(0.1)
-               >>> pub.publish('{data}')
+        .. note:: If you publishes just after creating Publisher instance, it will causes
+           lost of message. You have to add sleep if you just want to publish once.
+           
+           >>> pub = jps.Publisher('topic')
+           >>> time.sleep(0.1)
+           >>> pub.publish('{data}')
 
         :param json_msg: data to be published. This is ok if the data is not json.
         '''

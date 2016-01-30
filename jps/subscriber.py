@@ -1,4 +1,5 @@
 import zmq
+from zmq.utils.strtypes import unicode
 import time
 
 
