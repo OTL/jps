@@ -1,4 +1,5 @@
 import zmq
+from zmq.utils.strtypes import unicode
 
 
 class Publisher(object):
@@ -42,4 +43,7 @@ class Publisher(object):
             msg = json_msg
         else:
             msg = '{topic} {json}'.format(topic=self._topic, json=json_msg)
-        self._socket.send(msg)
+        if isinstance(self._topic, unicode):
+            self._socket.send_string(msg)
+        else:
+            self._socket.send(msg)
