@@ -27,7 +27,7 @@ class PyTest(TestCommand):
 
 
 setup(name='jps',
-      version='0.0.2a',
+      version='0.0.2a1',
       description='json pub/sub using zmq',
       author='Takashi Ogura',
       author_email='t.ogura@gmail.com',
