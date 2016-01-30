@@ -1,9 +1,11 @@
 import zmq
-from zmq.utils.strtypes import unicode
+from zmq.utils.strtypes import cast_bytes
+from zmq.utils.strtypes import cast_unicode
 import time
 
 
 class Subscriber(object):
+
     '''Subscribe the topic and call the callback function
 
     Example:
@@ -25,13 +27,10 @@ class Subscriber(object):
             raise Exception('you can\'t use " " for topic_name')
         context = zmq.Context()
         self._socket = context.socket(zmq.SUB)
-        self._socket.connect("tcp://{host}:{port}".format(host=master_host,
+        self._socket.connect('tcp://{host}:{port}'.format(host=master_host,
                                                           port=master_sub_port))
         self._topic = topic_name
-        if isinstance(self._topic, unicode):
-            self._socket.setsockopt_string(zmq.SUBSCRIBE, self._topic)
-        else:
-            self._socket.setsockopt(zmq.SUBSCRIBE, self._topic)
+        self._socket.setsockopt(zmq.SUBSCRIBE, cast_bytes(self._topic))
         self._user_callback = callback
         self._poller = zmq.Poller()
         self._poller.register(self._socket, zmq.POLLIN)
@@ -50,7 +49,7 @@ class Subscriber(object):
         while True:
             socks = dict(self._poller.poll(10))
             if socks.get(self._socket) == zmq.POLLIN:
-                msg = self._socket.recv()
+                msg = self._socket.recv_string()
                 self._callback(msg)
             else:
                 return

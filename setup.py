@@ -1,7 +1,6 @@
-import sys
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
-from multiprocessing import Process
+
 
 class PyTest(TestCommand):
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
@@ -17,12 +16,18 @@ class PyTest(TestCommand):
 
     def run_tests(self):
         #import here, cause outside the eggs aren't loaded
-        import pytest
         import jps
+        import os
+        import pytest
+        import signal
+        import sys
+        import time
+        from multiprocessing import Process
         forwarder = Process(target=jps.forwarder.main)
         forwarder.start()
+        time.sleep(0.1)
         errno = pytest.main(self.pytest_args)
-        forwarder.terminate()
+        os.kill(forwarder.pid, signal.SIGINT)
         sys.exit(errno)
 
 

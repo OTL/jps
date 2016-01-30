@@ -18,8 +18,9 @@ def test_pubsub_once():
     holder = MessageHolder()
     sub = jps.Subscriber('/hoge1', holder.callback)
     pub = jps.Publisher('/hoge1')
-    time.sleep(0.01)
+    time.sleep(0.1)
     pub.publish('hoge')
+    time.sleep(0.1)
     sub.spin_once()
     assert len(holder.get_msg()) == 1
     assert holder.get_msg()[0] == 'hoge'

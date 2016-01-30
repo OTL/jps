@@ -1,8 +1,9 @@
 import zmq
-from zmq.utils.strtypes import unicode
+from zmq.utils.strtypes import cast_bytes
 
 
 class Publisher(object):
+
     '''Publishes data for a topic.
 
     Example:
@@ -23,7 +24,7 @@ class Publisher(object):
         context = zmq.Context()
         self._socket = context.socket(zmq.PUB)
         self._socket.connect(
-            "tcp://{host}:{port}".format(host=master_host, port=master_pub_port))
+            'tcp://{host}:{port}'.format(host=master_host, port=master_pub_port))
         self._topic = topic_name
 
     def publish(self, json_msg):
@@ -31,7 +32,7 @@ class Publisher(object):
 
         .. note:: If you publishes just after creating Publisher instance, it will causes
            lost of message. You have to add sleep if you just want to publish once.
-           
+
            >>> pub = jps.Publisher('topic')
            >>> time.sleep(0.1)
            >>> pub.publish('{data}')
@@ -43,7 +44,4 @@ class Publisher(object):
             msg = json_msg
         else:
             msg = '{topic} {json}'.format(topic=self._topic, json=json_msg)
-        if isinstance(self._topic, unicode):
-            self._socket.send_string(msg)
-        else:
-            self._socket.send(msg)
+        self._socket.send(cast_bytes(msg))

@@ -64,7 +64,10 @@ def show_list(timeout_in_sec, out=sys.stdout):
             self._topic_names.add(topic)
 
         def get_topic_names(self):
-            return list(self._topic_names)
+            names = list(self._topic_names)
+            names.sort()
+            return names
+
     store = TopicNameStore()
     sub = jps.Subscriber('', store.callback)
     sleep_sec = 0.01
@@ -88,8 +91,9 @@ def record(file_path, topic_names=[]):
         def callback(self, raw_msg):
             topic, _, msg = raw_msg.partition(' ')
             if not self._topic_names or topic in self._topic_names:
-                self._output.write('{time:.9f} {data}\n'.format(time=time.time(),
-                                                                data=raw_msg))
+                self._output.write(
+                    '{time:.9f} {data}\n'.format(time=time.time(),
+                                                 data=raw_msg))
 
         def close(self):
             self._output.close()
@@ -130,23 +134,27 @@ def topic_command():
 
     echo_parser = command_parsers.add_parser('echo', help='show topic data')
     echo_parser.add_argument('topic_name', type=str, help='name of topic')
-    echo_parser.add_argument('--num', '-n', help='print N times and exit', type=int,
+    echo_parser.add_argument(
+        '--num', '-n', help='print N times and exit', type=int,
                              default=None)
 
     list_parser = command_parsers.add_parser('list', help='show topic list')
-    list_parser.add_argument('--timeout', '-t', help='timeout in sec', type=float,
+    list_parser.add_argument(
+        '--timeout', '-t', help='timeout in sec', type=float,
                              default=1.0)
 
     record_parser = command_parsers.add_parser(
         'record', help='record topic data')
     record_parser.add_argument('topic_names', nargs='*',
                                help='topic names to be recorded', type=str)
-    record_parser.add_argument('--file', '-f', help='output file name (default: record.jps.txt)',
+    record_parser.add_argument(
+        '--file', '-f', help='output file name (default: record.jps.txt)',
                                type=str, default='record.jps.txt')
 
     play_parser = command_parsers.add_parser(
         'play', help='play recorded topic data')
-    play_parser.add_argument('--file', '-f', help='input file name (default: record.jps.txt)',
+    play_parser.add_argument(
+        '--file', '-f', help='input file name (default: record.jps.txt)',
                              type=str, default='record.jps.txt')
 
     args = parser.parse_args()
