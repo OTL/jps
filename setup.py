@@ -26,9 +26,13 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 
-setup(name='jps', version='0.0.2a', description='json pub/sub using zmq',
-      author='Takashi Ogura', author_email='t.ogura@gmail.com',
-      url='http://github.com/OTL/jps', packages=find_packages(),
+setup(name='jps',
+      version='0.0.2a',
+      description='json pub/sub using zmq',
+      author='Takashi Ogura',
+      author_email='t.ogura@gmail.com',
+      url='http://github.com/OTL/jps',
+      packages=find_packages(exclude=['test', 'docs']),
       install_requires=[
         'zmq',
         ],
