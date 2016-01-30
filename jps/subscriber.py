@@ -27,11 +27,10 @@ class Subscriber(object):
         self._socket.connect("tcp://{host}:{port}".format(host=master_host,
                                                           port=master_sub_port))
         self._topic = topic_name
-        if isinstance(self._topic, str):
-            self._socket.setsockopt(zmq.SUBSCRIBE, self._topic)
-        else:
-            # this is for unicode (python3)
+        if isinstance(self._topic, unicode):
             self._socket.setsockopt_string(zmq.SUBSCRIBE, self._topic)
+        else:
+            self._socket.setsockopt(zmq.SUBSCRIBE, self._topic)
         self._user_callback = callback
         self._poller = zmq.Poller()
         self._poller.register(self._socket, zmq.POLLIN)
