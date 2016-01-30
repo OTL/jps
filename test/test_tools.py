@@ -34,7 +34,7 @@ def test_pubecho():
     echo_thread.start()
     time.sleep(0.01)
     jps.tools.pub('/test1', '{"json_msg1": 1.0}')
-    echo_thread.join()
+    echo_thread.join(5.0)
     assert echo_output.getvalue() == '{"json_msg1": 1.0}\n'
     echo_output.close()
 
@@ -51,7 +51,7 @@ def test_pubecho_repeat():
     time.sleep(1.5)
     os.kill(pub_process.pid, signal.SIGINT)
     pub_process.join(1.0)
-    echo_thread.join()
+    echo_thread.join(5.0)
     assert echo_output.getvalue() == 'a\na\n'
     echo_output.close()
 
@@ -68,7 +68,7 @@ def test_show_list():
     p1.publish('{a}')
     p2.publish('{b}')
 
-    show_thread.join()
+    show_thread.join(5.0)
     assert list_output.getvalue() == '/test_topic1\n/test_topic2\n'
     list_output.close()
 
@@ -109,7 +109,7 @@ def test_recordplay():
     time.sleep(0.1)
     play_all = Process(target=jps.tools.play, args=[file_path_all])
     play_all.start()
-    play_all.join()
+    play_all.join(5.0)
     time.sleep(0.1)
     sub1.spin_once()
     sub2.spin_once()
@@ -122,7 +122,7 @@ def test_recordplay():
 
     play = Process(target=jps.tools.play, args=[file_path])
     play.start()
-    play.join()
+    play.join(5.0)
 
     sub1.spin_once()
     sub2.spin_once()
