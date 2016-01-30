@@ -3,3 +3,4 @@ jps is simple pub/sub system for python. It is very easy to install and it is ea
 
 see http://jps.readthedocs.org/
 
+[![Build Status](https://travis-ci.org/OTL/jps.svg?branch=master)](https://travis-ci.org/OTL/jps)
