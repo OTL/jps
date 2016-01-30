@@ -51,6 +51,16 @@ jps_topic echo
 ----------------
 **echo** command prints json text data.
 
+  $ jps_topic echo -h
+  usage: jps_topic echo [-h] [--num NUM] topic_name
+  
+  positional arguments:
+    topic_name         name of topic
+  
+  optional arguments:
+    -h, --help         show this help message and exit
+    --num NUM, -n NUM  print N times and exit
+
 jps_topic list
 ----------------
 **list** command collects all topics and create list of topic names,
@@ -72,7 +82,7 @@ jps_topic record
 **record** command is like `rosbag <http://wiki.ros.org/rosbag>`_ command.
 It records the topic data to the file. You can replay the data by ``play`` command.
 You can use ``--file`` option to specify the output file name. Default is ``record.jps.txt``.
-You have to set the topic name to be recorded. ::
+You can set the topic name to be recorded. If the topic_names is empty, all topics will be recorded. ::
 
   $ jps_topic record -h
   usage: jps_topic record [-h] [--file FILE] [topic_names [topic_names ...]]

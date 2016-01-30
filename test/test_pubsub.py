@@ -1,7 +1,9 @@
 import jps
 import time
 
+
 class MessageHolder(object):
+
     def __init__(self):
         self._saved_msg = []
 

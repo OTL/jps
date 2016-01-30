@@ -25,16 +25,33 @@ def pub(topic_name, json_msg, repeat_rate=None):
             pass
 
 
-def echo(topic_name):
+def echo(topic_name, num_print=None, out=sys.stdout):
     '''print the data for the given topic forever
     '''
-    def callback(msg):
-        print msg
-    sub = jps.Subscriber(topic_name, callback)
-    sub.spin()
+    class PrintWithCount(object):
+
+        def __init__(self, out):
+            self._printed = 0
+            self._out = out
+
+        def print_and_increment(self, msg):
+            self._out.write('{}\n'.format(msg))
+            self._printed += 1
+
+        def get_count(self):
+            return self._printed
+
+    counter = PrintWithCount(out)
+    sub = jps.Subscriber(topic_name, counter.print_and_increment)
+    try:
+        while num_print is None or counter.get_count() < num_print:
+            sub.spin_once()
+            time.sleep(0.0001)
+    except KeyboardInterrupt:
+        pass
 
 
-def show_list(timeout_in_sec):
+def show_list(timeout_in_sec, out=sys.stdout):
     '''get the name list of the topics, and print it
     '''
     class TopicNameStore(object):
@@ -50,9 +67,12 @@ def show_list(timeout_in_sec):
             return list(self._topic_names)
     store = TopicNameStore()
     sub = jps.Subscriber('', store.callback)
-    time.sleep(timeout_in_sec)
-    sub.spin_once()
-    print store.get_topic_names()
+    sleep_sec = 0.01
+    for i in range(int(timeout_in_sec / sleep_sec)):
+        sub.spin_once()
+        time.sleep(sleep_sec)
+    for name in store.get_topic_names():
+        out.write('{}\n'.format(name))
 
 
 def record(file_path, topic_names=[]):
@@ -74,16 +94,17 @@ def record(file_path, topic_names=[]):
         def close(self):
             self._output.close()
 
-    store = TopicRecorder(file_path, topic_names)
-    sub = jps.Subscriber('', store.callback)
+    writer = TopicRecorder(file_path, topic_names)
+    sub = jps.Subscriber('', writer.callback)
     sub.spin()
-    store.close()
+    writer.close()
 
 
 def play(file_path):
     '''replay the recorded data by record()
     '''
     pub = jps.Publisher('')
+    time.sleep(0.1)
     last_time = None
     for line in open(file_path, 'r'):
         time_str, _, raw_msg = line.partition(' ')
@@ -109,6 +130,8 @@ def topic_command():
 
     echo_parser = command_parsers.add_parser('echo', help='show topic data')
     echo_parser.add_argument('topic_name', type=str, help='name of topic')
+    echo_parser.add_argument('--num', '-n', help='print N times and exit', type=int,
+                             default=None)
 
     list_parser = command_parsers.add_parser('list', help='show topic list')
     list_parser.add_argument('--timeout', '-t', help='timeout in sec', type=float,
@@ -131,7 +154,7 @@ def topic_command():
     if args.command == 'pub':
         pub(args.topic_name, args.data, repeat_rate=args.repeat)
     elif args.command == 'echo':
-        echo(args.topic_name)
+        echo(args.topic_name, args.num)
     elif args.command == 'list':
         show_list(args.timeout)
     elif args.command == 'record':
