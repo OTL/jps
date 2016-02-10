@@ -7,7 +7,7 @@ class MessageHolder(object):
     def __init__(self):
         self._saved_msg = []
 
-    def callback(self, msg):
+    def __call__(self, msg):
         self._saved_msg.append(msg)
 
     def get_msg(self):
@@ -16,7 +16,7 @@ class MessageHolder(object):
 
 def test_pubsub_once():
     holder = MessageHolder()
-    sub = jps.Subscriber('/hoge1', holder.callback)
+    sub = jps.Subscriber('/hoge1', holder)
     pub = jps.Publisher('/hoge1')
     time.sleep(0.1)
     pub.publish('hoge')
@@ -43,7 +43,7 @@ def test_pubsub_iterator():
 
 def test_pubsub_iterator_with_normal():
     holder = MessageHolder()
-    sub_normal = jps.Subscriber('/hoge1', holder.callback)
+    sub_normal = jps.Subscriber('/hoge1', holder)
     sub = jps.Subscriber('/hoge1')
     pub = jps.Publisher('/hoge1')
     time.sleep(0.1)
@@ -64,7 +64,7 @@ def test_pubsub_iterator_with_normal():
 
 def test_pubsub_near_names():
     holder = MessageHolder()
-    sub = jps.Subscriber('/hoge', holder.callback)
+    sub = jps.Subscriber('/hoge', holder)
     pub1 = jps.Publisher('/hoge1')
     time.sleep(0.01)
     pub1.publish('aaa')
@@ -86,7 +86,7 @@ def test_pubsub_near_names():
 
 def test_pubsub_multi():
     holder = MessageHolder()
-    sub = jps.Subscriber('/hoge1', holder.callback)
+    sub = jps.Subscriber('/hoge1', holder)
     pub = jps.Publisher('/hoge1')
     time.sleep(0.01)
     pub.publish('hoge0')

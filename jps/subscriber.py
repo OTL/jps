@@ -86,6 +86,7 @@ class Subscriber(object):
         return self
 
     def __next__(self):
+        '''receive next data'''
         try:
             raw_msg = self._socket.recv_string()
         except KeyboardInterrupt:

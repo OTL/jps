@@ -17,14 +17,11 @@ class MessageHolder(object):
     def __init__(self):
         self._saved_msg = []
 
-    def callback(self, msg):
+    def __call__(self, msg):
         self._saved_msg.append(msg)
 
     def get_msg(self):
         return self._saved_msg
-
-    def clear_msg(self):
-        self._saved_msg = []
 
 
 def test_pubecho():
@@ -111,36 +108,26 @@ def test_recordplay():
 
     print_file_and_check_json(file_path_all)
     print_file_and_check_json(file_path)
-
     holder1 = MessageHolder()
-    sub1 = jps.Subscriber('/test_rec1', holder1.callback)
-    holder2 = MessageHolder()
-    sub2 = jps.Subscriber('/test_rec2', holder2.callback)
+    sub1 = jps.Subscriber('/test_rec1', holder1)
+    sub2 = jps.Subscriber('/test_rec2')
     time.sleep(0.1)
     play_all = Process(target=jps.tools.play, args=[file_path_all])
     play_all.start()
     time.sleep(0.1)
     play_all.join(2.0)
-    time.sleep(0.1)
-    sub1.spin_once()
-    sub2.spin_once()
 
-    assert holder1.get_msg() == ['a']
-    assert holder2.get_msg() == ['b']
-
-    holder1.clear_msg()
-    holder2.clear_msg()
+    assert sub1.next() == 'a'
+    assert sub2.next() == 'b'
 
     play = Process(target=jps.tools.play, args=[file_path])
     play.start()
     time.sleep(0.1)
     play.join(2.0)
-    time.sleep(0.1)
     sub1.spin_once()
-    sub2.spin_once()
-
+    
     assert holder1.get_msg() == []
-    assert holder2.get_msg() == ['b']
+    assert sub2.next() == 'b'
 
     os.remove(file_path_all)
     os.remove(file_path)
