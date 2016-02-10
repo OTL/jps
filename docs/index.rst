@@ -16,6 +16,7 @@ Contents:
    :maxdepth: 4
 
    intro
+   simple_subscriber
    tool
    jps
 

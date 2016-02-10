@@ -81,8 +81,9 @@ jps_topic record
 -----------------
 **record** command is like `rosbag <http://wiki.ros.org/rosbag>`_ command.
 It records the topic data to the file. You can replay the data by ``play`` command.
-You can use ``--file`` option to specify the output file name. Default is ``record.jps.txt``.
-You can set the topic name to be recorded. If the topic_names is empty, all topics will be recorded. ::
+You can use ``--file`` option to specify the output file name. Default is ``record.json``.
+You can set the topic name to be recorded. If the topic_names is empty, all topics will be recorded. 
+Because the file format is normal json, you can read/parse it by any json reader if you want. ::
 
   $ jps_topic record -h
   usage: jps_topic record [-h] [--file FILE] [topic_names [topic_names ...]]
@@ -92,7 +93,7 @@ You can set the topic name to be recorded. If the topic_names is empty, all topi
   
   optional arguments:
     -h, --help            show this help message and exit
-    --file FILE, -f FILE  output file name (default: record.jps.txt)
+    --file FILE, -f FILE  output file name (default: record.json)
 
 
 jps_topic play

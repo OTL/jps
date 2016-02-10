@@ -26,6 +26,42 @@ def test_pubsub_once():
     assert holder.get_msg()[0] == 'hoge'
 
 
+def test_pubsub_iterator():
+    sub = jps.Subscriber('/hoge1')
+    pub = jps.Publisher('/hoge1')
+    time.sleep(0.1)
+    for a in range(5):
+        pub.publish('hoge{}'.format(a))
+    time.sleep(0.1)
+    i = 0
+    for msg in sub:
+        assert msg == 'hoge{}'.format(i)
+        i += 1
+        if i == 5:
+            return
+
+
+def test_pubsub_iterator_with_normal():
+    holder = MessageHolder()
+    sub_normal = jps.Subscriber('/hoge1', holder.callback)
+    sub = jps.Subscriber('/hoge1')
+    pub = jps.Publisher('/hoge1')
+    time.sleep(0.1)
+    for a in range(5):
+        pub.publish('hoge{}'.format(a))
+    time.sleep(0.1)
+    i = 0
+    for msg in sub:
+        assert msg == 'hoge{}'.format(i)
+        i += 1
+        if i == 5:
+            return
+    sub_normal.spin_once()
+    assert len(holder.get_msg()) == 5
+    for a in range(5):
+        assert holder.get_msg()[a] == 'hoge{}'.format(a)
+
+
 def test_pubsub_near_names():
     holder = MessageHolder()
     sub = jps.Subscriber('/hoge', holder.callback)

@@ -1,6 +1,9 @@
 import argparse
+import datetime
 import jps
+import json
 import os
+import signal
 import sys
 import time
 
@@ -87,16 +90,35 @@ def record(file_path, topic_names=[]):
             self._topic_names = topic_names
             self._file_path = file_path
             self._output = open(self._file_path, 'w')
+            signal.signal(signal.SIGINT, self._handle_signal)
+            signal.signal(signal.SIGTERM, self._handle_signal)
+            header = {}
+            header['topic_names'] = topic_names
+            header['start_date'] = str(datetime.datetime.today())
+            header_string = json.dumps({'header':header})
+            tail_removed_header = header_string[0:-1]
+            self._output.write(tail_removed_header + ',\n')
+            self._output.write(' "data": [\n')
+            self._has_no_data = True
 
         def callback(self, raw_msg):
+            if self._output.closed:
+                return
             topic, _, msg = raw_msg.partition(' ')
             if not self._topic_names or topic in self._topic_names:
-                self._output.write(
-                    '{time:.9f} {data}\n'.format(time=time.time(),
-                                                 data=raw_msg))
-
+                if not self._has_no_data:
+                    self._output.write(',\n')
+                else:
+                    self._has_no_data = False
+                self._output.write(json.dumps([time.time(), raw_msg]))
         def close(self):
-            self._output.close()
+            if not self._output.closed:
+                self._output.write('\n]}')
+                self._output.close()
+
+        def _handle_signal(self, signum, frame):
+            self.close()
+            sys.exit(0)
 
     writer = TopicRecorder(file_path, topic_names)
     sub = jps.Subscriber('', writer.callback)
@@ -110,13 +132,18 @@ def play(file_path):
     pub = jps.Publisher('')
     time.sleep(0.1)
     last_time = None
-    for line in open(file_path, 'r'):
-        time_str, _, raw_msg = line.partition(' ')
-        publish_time = float(time_str)
-        if last_time is not None:
-            time.sleep(publish_time - last_time)
-        pub.publish(raw_msg.rstrip())
-        last_time = publish_time
+    with open(file_path, 'r') as f:
+        # super hack to remove header
+        f.readline()
+        f.readline()
+        for line in f:
+            if line.startswith(']}'):
+                break
+            publish_time, raw_msg = json.loads(line.rstrip(',\n'))
+            if last_time is not None:
+                time.sleep(publish_time - last_time)
+            pub.publish(raw_msg.rstrip())
+            last_time = publish_time
 
 
 def topic_command():
@@ -148,14 +175,14 @@ def topic_command():
     record_parser.add_argument('topic_names', nargs='*',
                                help='topic names to be recorded', type=str)
     record_parser.add_argument(
-        '--file', '-f', help='output file name (default: record.jps.txt)',
-                               type=str, default='record.jps.txt')
+        '--file', '-f', help='output file name (default: record.json)',
+                               type=str, default='record.json')
 
     play_parser = command_parsers.add_parser(
         'play', help='play recorded topic data')
     play_parser.add_argument(
-        '--file', '-f', help='input file name (default: record.jps.txt)',
-                             type=str, default='record.jps.txt')
+        '--file', '-f', help='input file name (default: record.json)',
+                             type=str, default='record.json')
 
     args = parser.parse_args()
 

@@ -1,5 +1,6 @@
 from __future__ import print_function
 import jps
+import json
 import time
 import signal
 import os
@@ -68,7 +69,7 @@ def test_show_list():
     p1.publish('{a}')
     p2.publish('{b}')
 
-    show_thread.join(5.0)
+    show_thread.join(2.0)
     assert list_output.getvalue() == '/test_topic1\n/test_topic2\n'
     list_output.close()
 
@@ -76,8 +77,8 @@ def test_show_list():
 def test_recordplay():
     import tempfile
     import os
-    file_path_all = tempfile.gettempdir() + '/record_all.jps.txt'
-    file_path = tempfile.gettempdir() + '/record2.jps.txt'
+    file_path_all = tempfile.gettempdir() + '/record_all.json'
+    file_path = tempfile.gettempdir() + '/record2.json'
     print(file_path_all)
     print(file_path)
     record_all = Process(target=jps.tools.record, args=(file_path_all, []))
@@ -85,7 +86,7 @@ def test_recordplay():
     record = Process(target=jps.tools.record, args=(file_path, ['/test_rec2']))
     record.start()
 
-    time.sleep(0.5)
+    time.sleep(0.1)
 
     p1 = jps.Publisher('/test_rec1')
     p2 = jps.Publisher('/test_rec2')
@@ -102,6 +103,11 @@ def test_recordplay():
     assert os.path.exists(file_path_all)
     assert os.path.exists(file_path)
 
+    with open(file_path_all) as f:
+        json.loads(f.read())
+    with open(file_path) as f:
+        json.loads(f.read())
+
     holder1 = MessageHolder()
     sub1 = jps.Subscriber('/test_rec1', holder1.callback)
     holder2 = MessageHolder()
@@ -109,7 +115,8 @@ def test_recordplay():
     time.sleep(0.1)
     play_all = Process(target=jps.tools.play, args=[file_path_all])
     play_all.start()
-    play_all.join(5.0)
+    time.sleep(0.1)
+    play_all.join(2.0)
     time.sleep(0.1)
     sub1.spin_once()
     sub2.spin_once()
@@ -122,8 +129,9 @@ def test_recordplay():
 
     play = Process(target=jps.tools.play, args=[file_path])
     play.start()
-    play.join(5.0)
-
+    time.sleep(0.1)
+    play.join(2.0)
+    time.sleep(0.1)
     sub1.spin_once()
     sub2.spin_once()
 

@@ -58,4 +58,3 @@ To get the list of the topics, you can use jps_topic list ::
 If you want to see the data in /hoge1 topic, ::
 
   $ jps_topic echo /hoge1
-  

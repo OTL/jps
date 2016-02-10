@@ -21,7 +21,7 @@ class Subscriber(object):
     :param master_sub_port: port of publisher/forwarder
     '''
 
-    def __init__(self, topic_name, callback, master_host='localhost',
+    def __init__(self, topic_name, callback=None, master_host='localhost',
                  master_sub_port=54320):
         if topic_name.count(' '):
             raise Exception('you can\'t use " " for topic_name')
@@ -35,24 +35,36 @@ class Subscriber(object):
         self._poller = zmq.Poller()
         self._poller.register(self._socket, zmq.POLLIN)
 
-    def _callback(self, raw_msg):
+    def _strip_topic_name_if_not_wildcard(self, raw_msg):
         topic, _, msg = raw_msg.partition(' ')
+        # wildcard('')
         if self._topic == '':
-            self._user_callback(raw_msg)
+            return raw_msg
         elif topic == self._topic:
+            return msg
+        return None
+    
+    def _callback(self, raw_msg):
+        if self._user_callback is None:
+            return
+        msg = self._strip_topic_name_if_not_wildcard(raw_msg)
+        if msg is not None:
             self._user_callback(msg)
 
     def spin_once(self):
         '''Read the queued data and call the callback for them.
         '''
         # parse all data
-        while True:
-            socks = dict(self._poller.poll(10))
-            if socks.get(self._socket) == zmq.POLLIN:
-                msg = self._socket.recv_string()
-                self._callback(msg)
-            else:
-                return
+        try:
+            while True:
+                socks = dict(self._poller.poll(10))
+                if socks.get(self._socket) == zmq.POLLIN:
+                    msg = self._socket.recv_string()
+                    self._callback(msg)
+                else:
+                    return
+        except KeyboardInterrupt:
+            pass
 
     def spin(self):
         '''call spin_once() forever'''
@@ -62,3 +74,17 @@ class Subscriber(object):
                 time.sleep(0.0001)
         except KeyboardInterrupt:
             pass
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        try:
+            raw_msg = self._socket.recv_string()
+        except KeyboardInterrupt:
+            raise StopIteration()
+        msg = self._strip_topic_name_if_not_wildcard(raw_msg)
+        if msg is None:
+            return next
+        return msg
+        
