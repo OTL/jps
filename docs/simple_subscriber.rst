@@ -18,7 +18,7 @@ simple_subscriber::
 
 This prints /hoge1 messages.
 
-You can mix the two style if you want.
+You can mix the two style if you want. ::
 
 
   import jps
@@ -30,3 +30,4 @@ You can mix the two style if you want.
   for msg in jps.Subscriber('/hoge1'):
       print 'hoge1 is here!{}'.format(msg)
       sub2.spin_once()
+
