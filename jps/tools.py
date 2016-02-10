@@ -111,6 +111,7 @@ def record(file_path, topic_names=[], master_host='localhost', master_sub_port=j
                 else:
                     self._has_no_data = False
                 self._output.write(json.dumps([time.time(), raw_msg]))
+
         def close(self):
             if not self._output.closed:
                 self._output.write('\n]}')
@@ -130,8 +131,9 @@ def play(file_path, master_host='localhost', master_pub_port=jps.DEFAULT_PUB_POR
     '''replay the recorded data by record()
     '''
     pub = jps.Publisher('', master_host=master_host, master_pub_port=master_pub_port)
-    time.sleep(0.1)
+    time.sleep(0.2)
     last_time = None
+    print('start publishing file {}'.format(file_path))
     with open(file_path, 'r') as f:
         # super hack to remove header
         f.readline()
@@ -144,6 +146,7 @@ def play(file_path, master_host='localhost', master_pub_port=jps.DEFAULT_PUB_POR
                 time.sleep(publish_time - last_time)
             pub.publish(raw_msg.rstrip())
             last_time = publish_time
+    print('fnished')
 
 
 def topic_command():
