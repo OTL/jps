@@ -103,10 +103,14 @@ def test_recordplay():
     assert os.path.exists(file_path_all)
     assert os.path.exists(file_path)
 
-    with open(file_path_all) as f:
-        json.loads(f.read())
-    with open(file_path) as f:
-        json.loads(f.read())
+    def print_file_and_check_json(path):
+        with open(file_path_all) as f:
+            data = f.read()
+            print(data)
+            json.loads(data)
+
+    print_file_and_check_json(file_path_all)
+    print_file_and_check_json(file_path)
 
     holder1 = MessageHolder()
     sub1 = jps.Subscriber('/test_rec1', holder1.callback)
