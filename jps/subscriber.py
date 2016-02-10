@@ -78,7 +78,7 @@ class Subscriber(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         try:
             raw_msg = self._socket.recv_string()
         except KeyboardInterrupt:
@@ -88,3 +88,5 @@ class Subscriber(object):
             return next
         return msg
         
+    next = __next__
+
