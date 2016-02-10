@@ -17,6 +17,12 @@ class Subscriber(object):
     >>> sub = jps.Subscriber('topic_name', callback)
     >>> sub.spin()
 
+    or you can use python generator style
+
+    >>> import jps
+    >>> for msg in jps.Subscriber('/hoge1'):
+    ...   print msg
+
     :param topic_name: topic name
     :param master_host: host name of publisher/forwarder
     :param master_sub_port: port of publisher/forwarder

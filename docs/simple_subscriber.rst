@@ -18,7 +18,7 @@ simple_subscriber::
 
 This prints /hoge1 messages.
 
-You can mix the two style if you want. ::
+You can mix the two styles if you want. ::
 
 
   import jps
