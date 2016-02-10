@@ -74,27 +74,24 @@ class Subscriber(object):
             pass
 
     def spin(self):
-        '''call spin_once() forever'''
-        try:
-            while True:
-                self.spin_once()
-                time.sleep(0.0001)
-        except KeyboardInterrupt:
-            pass
+        '''call callback for all data forever (until \C-c)'''
+        for msg in self:
+            self._user_callback(msg)
 
     def __iter__(self):
         return self
 
-    def __next__(self):
-        '''receive next data'''
+    def next(self):
+        '''receive next data (block until next data)'''
         try:
             raw_msg = self._socket.recv_string()
         except KeyboardInterrupt:
             raise StopIteration()
         msg = self._strip_topic_name_if_not_wildcard(raw_msg)
         if msg is None:
-            return next
+            return self.next()
         return msg
-        
-    next = __next__
+
+    # for python3
+    __next__ = next
 
