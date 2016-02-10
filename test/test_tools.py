@@ -86,7 +86,7 @@ def test_recordplay():
     record = Process(target=jps.tools.record, args=(file_path, ['/test_rec2']))
     record.start()
 
-    time.sleep(0.1)
+    time.sleep(0.5)
 
     p1 = jps.Publisher('/test_rec1')
     p2 = jps.Publisher('/test_rec2')
@@ -104,7 +104,7 @@ def test_recordplay():
     assert os.path.exists(file_path)
 
     def print_file_and_check_json(path):
-        with open(file_path_all) as f:
+        with open(path) as f:
             data = f.read()
             print(data)
             json.loads(data)
