@@ -1,7 +1,18 @@
 import zmq
+from .common import DEFAULT_PUB_PORT
+from .common import DEFAULT_SUB_PORT
 
 
-def main(sub_port=54321, pub_port=54320):
+def command():
+    import argparse
+    parser = argparse.ArgumentParser(description='jps forwarder')
+    parser.add_argument('--publisher_port', '-p', type=int, help='publisher port', default=DEFAULT_PUB_PORT)
+    parser.add_argument('--subscriber_port', '-s', type=int, help='subscriber port', default=DEFAULT_SUB_PORT)
+    args = parser.parse_args()
+    main(args.publisher_port, args.subscriber_port)
+
+
+def main(pub_port=DEFAULT_PUB_PORT, sub_port=DEFAULT_SUB_PORT):
     '''main of forwarder
 
     :param sub_port: port for subscribers
@@ -12,9 +23,9 @@ def main(sub_port=54321, pub_port=54320):
         frontend = context.socket(zmq.SUB)
         backend = context.socket(zmq.PUB)
 
-        frontend.bind('tcp://*:{sub_port}'.format(sub_port=sub_port))
+        frontend.bind('tcp://*:{pub_port}'.format(pub_port=pub_port))
         frontend.setsockopt(zmq.SUBSCRIBE, b'')
-        backend.bind('tcp://*:{pub_port}'.format(pub_port=pub_port))
+        backend.bind('tcp://*:{sub_port}'.format(sub_port=sub_port))
         zmq.device(zmq.FORWARDER, frontend, backend)
     except KeyboardInterrupt:
         pass

@@ -2,6 +2,7 @@ import zmq
 from zmq.utils.strtypes import cast_bytes
 from zmq.utils.strtypes import cast_unicode
 import time
+from .common import DEFAULT_SUB_PORT
 
 
 class Subscriber(object):
@@ -22,7 +23,7 @@ class Subscriber(object):
     '''
 
     def __init__(self, topic_name, callback=None, master_host='localhost',
-                 master_sub_port=54320):
+                 master_sub_port=DEFAULT_SUB_PORT):
         if topic_name.count(' '):
             raise Exception('you can\'t use " " for topic_name')
         context = zmq.Context()

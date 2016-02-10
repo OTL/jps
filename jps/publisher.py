@@ -1,5 +1,6 @@
 import zmq
 from zmq.utils.strtypes import cast_bytes
+from .common import DEFAULT_PUB_PORT
 
 
 class Publisher(object):
@@ -17,10 +18,9 @@ class Publisher(object):
     '''
 
     def __init__(self, topic_name, master_host='localhost',
-                 master_pub_port=54321):
+                 master_pub_port=DEFAULT_PUB_PORT):
         if topic_name.count(' '):
             raise Exception('you can\'t use " " for topic_name')
-        self._port = master_pub_port
         context = zmq.Context()
         self._socket = context.socket(zmq.PUB)
         self._socket.connect(
