@@ -199,7 +199,7 @@ def topic_command():
     if args.command == 'pub':
         pub(args.topic_name, args.data, repeat_rate=args.repeat, master_host=args.host, master_pub_port=args.publisher_port)
     elif args.command == 'echo':
-        echo(args.topic_name, args.num, master_host=args.host, master_pub_port=args.publisher_port)
+        echo(args.topic_name, args.num, master_host=args.host, master_sub_port=args.subscriber_port)
     elif args.command == 'list':
         show_list(args.timeout, master_host=args.host, master_sub_port=args.subscriber_port)
     elif args.command == 'record':
