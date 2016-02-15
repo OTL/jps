@@ -8,7 +8,7 @@ import sys
 import time
 
 
-def pub(topic_name, json_msg, repeat_rate=None, master_host='localhost', master_pub_port=jps.DEFAULT_PUB_PORT):
+def pub(topic_name, json_msg, repeat_rate=None, master_host=jps.DEFAULT_HOST, master_pub_port=jps.DEFAULT_PUB_PORT):
     '''publishes the data to the topic
 
     :param topic_name: name of the topic
@@ -28,7 +28,7 @@ def pub(topic_name, json_msg, repeat_rate=None, master_host='localhost', master_
             pass
 
 
-def echo(topic_name, num_print=None, out=sys.stdout, master_host='localhost', master_sub_port=jps.DEFAULT_SUB_PORT):
+def echo(topic_name, num_print=None, out=sys.stdout, master_host=jps.DEFAULT_HOST, master_sub_port=jps.DEFAULT_SUB_PORT):
     '''print the data for the given topic forever
     '''
     class PrintWithCount(object):
@@ -54,7 +54,7 @@ def echo(topic_name, num_print=None, out=sys.stdout, master_host='localhost', ma
         pass
 
 
-def show_list(timeout_in_sec, out=sys.stdout, master_host='localhost', master_sub_port=jps.DEFAULT_SUB_PORT):
+def show_list(timeout_in_sec, out=sys.stdout, master_host=jps.DEFAULT_HOST, master_sub_port=jps.DEFAULT_SUB_PORT):
     '''get the name list of the topics, and print it
     '''
     class TopicNameStore(object):
@@ -81,7 +81,7 @@ def show_list(timeout_in_sec, out=sys.stdout, master_host='localhost', master_su
         out.write('{}\n'.format(name))
 
 
-def record(file_path, topic_names=[], master_host='localhost', master_sub_port=jps.DEFAULT_SUB_PORT):
+def record(file_path, topic_names=[], master_host=jps.DEFAULT_HOST, master_sub_port=jps.DEFAULT_SUB_PORT):
     '''record the topic data to the file
     '''
     class TopicRecorder(object):
@@ -127,7 +127,7 @@ def record(file_path, topic_names=[], master_host='localhost', master_sub_port=j
     writer.close()
 
 
-def play(file_path, master_host='localhost', master_pub_port=jps.DEFAULT_PUB_PORT):
+def play(file_path, master_host=jps.DEFAULT_HOST, master_pub_port=jps.DEFAULT_PUB_PORT):
     '''replay the recorded data by record()
     '''
     pub = jps.Publisher('', master_host=master_host, master_pub_port=master_pub_port)
@@ -154,7 +154,7 @@ def topic_command():
     '''
     parser = argparse.ArgumentParser(description='json pub/sub tool')
     common_parser = argparse.ArgumentParser(add_help=False)
-    common_parser.add_argument('--host', type=str, help='master host', default='localhost')
+    common_parser.add_argument('--host', type=str, help='master host', default=jps.DEFAULT_HOST)
     pub_common_parser = argparse.ArgumentParser(add_help=False, parents=[common_parser])
     pub_common_parser.add_argument('--publisher_port', '-p', type=int, help='publisher port', default=jps.DEFAULT_PUB_PORT)
     sub_common_parser = argparse.ArgumentParser(add_help=False, parents=[common_parser])
