@@ -25,18 +25,18 @@ class Subscriber(object):
     ...   print msg
 
     :param topic_name: topic name
-    :param master_host: host name of publisher/forwarder
-    :param master_sub_port: port of publisher/forwarder
+    :param host: host name of publisher/forwarder
+    :param sub_port: port of publisher/forwarder
     '''
 
-    def __init__(self, topic_name, callback=None, master_host=DEFAULT_HOST,
-                 master_sub_port=DEFAULT_SUB_PORT):
+    def __init__(self, topic_name, callback=None, host=DEFAULT_HOST,
+                 sub_port=DEFAULT_SUB_PORT):
         if topic_name.count(' '):
             raise Exception('you can\'t use " " for topic_name')
         context = zmq.Context()
         self._socket = context.socket(zmq.SUB)
-        self._socket.connect('tcp://{host}:{port}'.format(host=master_host,
-                                                          port=master_sub_port))
+        self._socket.connect('tcp://{host}:{port}'.format(host=host,
+                                                          port=sub_port))
         self._topic = topic_name
         self._socket.setsockopt(zmq.SUBSCRIBE, cast_bytes(self._topic))
         self._user_callback = callback

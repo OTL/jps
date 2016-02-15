@@ -14,18 +14,17 @@ class Publisher(object):
     >>> pub.publish('{"name": "hoge"}')
 
     :param topic_name: Topic name
-    :param master_host: host of subscriber/forwarder
-    :param master_pub_port: port of subscriber/forwarder
+    :param host: host of subscriber/forwarder
+    :param pub_port: port of subscriber/forwarder
     '''
 
-    def __init__(self, topic_name, master_host=DEFAULT_HOST,
-                 master_pub_port=DEFAULT_PUB_PORT):
+    def __init__(self, topic_name, host=DEFAULT_HOST, pub_port=DEFAULT_PUB_PORT):
         if topic_name.count(' '):
             raise Exception('you can\'t use " " for topic_name')
         context = zmq.Context()
         self._socket = context.socket(zmq.PUB)
         self._socket.connect(
-            'tcp://{host}:{port}'.format(host=master_host, port=master_pub_port))
+            'tcp://{host}:{port}'.format(host=host, port=pub_port))
         self._topic = topic_name
 
     def publish(self, json_msg):
