@@ -61,18 +61,29 @@ class Subscriber(object):
 
     def spin_once(self):
         '''Read the queued data and call the callback for them.
+        You have to handle KeyboardInterrupt (\C-c) manually.
+
+        Example:
+        
+        >>> def callback(msg):
+        ...   print msg
+        >>> sub = jps.Subscriber('topic_name', callback)
+        >>> try:
+        ...   while True:
+        ...     sub.spin_once():
+        ...     time.sleep(0.1)
+        ... except KeyboardInterrupt:
+        ...   pass
+
         '''
         # parse all data
-        try:
-            while True:
-                socks = dict(self._poller.poll(10))
-                if socks.get(self._socket) == zmq.POLLIN:
-                    msg = self._socket.recv_string()
-                    self._callback(msg)
-                else:
-                    return
-        except KeyboardInterrupt:
-            pass
+        while True:
+            socks = dict(self._poller.poll(10))
+            if socks.get(self._socket) == zmq.POLLIN:
+                msg = self._socket.recv_string()
+                self._callback(msg)
+            else:
+                return
 
     def spin(self):
         '''call callback for all data forever (until \C-c)'''
