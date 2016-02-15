@@ -25,6 +25,10 @@ If you want to know how to use, try ``-h`` option. ::
   optional arguments:
     -h, --help            show this help message and exit
 
+
+For all commands, you can set the host of `jps_forwarder` by `--host HOST`,
+if you want to use jps from remote computer.
+
 jps_topic pub
 ----------------
 **pub** command publishes json text data. ::
@@ -35,7 +39,7 @@ It publishes only once if the ``--repeat`` option is not specified.
 see ``-h`` option for more detail. ::
 
   $ jps_topic pub -h
-  usage: jps_topic pub [-h] [--repeat REPEAT] topic_name data
+  usage: jps_topic pub [-h] [--host HOST] [--publisher_port PUBLISHER_PORT] [--repeat REPEAT] topic_name data
   
   positional arguments:
     topic_name            name of topic
@@ -43,6 +47,9 @@ see ``-h`` option for more detail. ::
   
   optional arguments:
     -h, --help            show this help message and exit
+    --host HOST           master host
+    --publisher_port PUBLISHER_PORT, -p PUBLISHER_PORT
+                          publisher port
     --repeat REPEAT, -r REPEAT
                           repeat in hz
 
@@ -52,13 +59,16 @@ jps_topic echo
 **echo** command prints json text data. ::
 
   $ jps_topic echo -h
-  usage: jps_topic echo [-h] [--num NUM] topic_name
+  usage: jps_topic echo [-h] [--host HOST] [--subscriber_port SUBSCRIBER_PORT] [--num NUM] topic_name
   
   positional arguments:
     topic_name         name of topic
   
   optional arguments:
     -h, --help         show this help message and exit
+    --host HOST           master host
+    --subscriber_port SUBSCRIBER_PORT, -s SUBSCRIBER_PORT
+                          subscriber port
     --num NUM, -n NUM  print N times and exit
 
 jps_topic list
@@ -70,10 +80,13 @@ catch the name. You can use ``--timeout`` option to catch the slow topics. ::
 
 
   $ jps_topic list --help
-  usage: jps_topic list [-h] [--timeout TIMEOUT]
+  usage: jps_topic list [-h] [--host HOST] [--subscriber_port SUBSCRIBER_PORT] [--timeout TIMEOUT]
   
   optional arguments:
     -h, --help            show this help message and exit
+    --host HOST           master host
+    --subscriber_port SUBSCRIBER_PORT, -s SUBSCRIBER_PORT
+                          subscriber port
     --timeout TIMEOUT, -t TIMEOUT
                           timeout in sec
 
@@ -86,20 +99,31 @@ You can set the topic name to be recorded. If the topic_names is empty, all topi
 Because the file format is normal json, you can read/parse it by any json reader if you want. ::
 
   $ jps_topic record -h
-  usage: jps_topic record [-h] [--file FILE] [topic_names [topic_names ...]]
+  usage: jps_topic record [-h] [--host HOST] [--subscriber_port SUBSCRIBER_PORT] [--file FILE] [topic_names [topic_names ...]]
   
   positional arguments:
     topic_names           topic names to be recorded
   
   optional arguments:
     -h, --help            show this help message and exit
+    --host HOST           master host
+    --subscriber_port SUBSCRIBER_PORT, -s SUBSCRIBER_PORT
+                          subscriber port
     --file FILE, -f FILE  output file name (default: record.json)
 
 
 jps_topic play
 -----------------
-**play** command replays the saved data by ``jps_topic record``.
-You can specify the file name by ``--file`` option.
+**play** command replays the saved data by ``jps_topic record``. ::
 
-
-
+  $ jps_topic play -h
+  usage: jps_topic play [-h] [--host HOST] [--publisher_port PUBLISHER_PORT] file
+  
+  positional arguments:
+    file                  input file name
+  
+  optional arguments:
+    -h, --help            show this help message and exit
+    --host HOST           master host
+    --publisher_port PUBLISHER_PORT, -p PUBLISHER_PORT
+                          publisher port

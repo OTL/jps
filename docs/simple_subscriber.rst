@@ -7,7 +7,7 @@ Simple means below here.
 - subscribe only one topic
 - just while loop main function
 
-simple_subscriber::
+simple_subscriber ::
 
   import jps
   
@@ -19,7 +19,6 @@ simple_subscriber::
 This prints /hoge1 messages.
 
 You can mix the two styles if you want. ::
-
 
   import jps
   

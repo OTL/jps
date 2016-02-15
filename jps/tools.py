@@ -190,9 +190,7 @@ def topic_command():
 
     play_parser = command_parsers.add_parser(
         'play', help='play recorded topic data', parents=[pub_common_parser])
-    play_parser.add_argument(
-        '--file', '-f', help='input file name (default: record.json)',
-                             type=str, default='record.json')
+    play_parser.add_argument('file', type=str, help='input file name')
 
     args = parser.parse_args()
 
