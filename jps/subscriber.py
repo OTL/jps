@@ -51,7 +51,7 @@ class Subscriber(object):
         elif topic == self._topic:
             return msg
         return None
-    
+
     def _callback(self, raw_msg):
         if self._user_callback is None:
             return
@@ -64,7 +64,7 @@ class Subscriber(object):
         You have to handle KeyboardInterrupt (\C-c) manually.
 
         Example:
-        
+
         >>> def callback(msg):
         ...   print msg
         >>> sub = jps.Subscriber('topic_name', callback)
@@ -106,4 +106,3 @@ class Subscriber(object):
 
     # for python3
     __next__ = next
-

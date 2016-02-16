@@ -1,5 +1,6 @@
 import jps
 
+
 def callback(msg):
     print 'hoge2 = {}'.format(msg)
 

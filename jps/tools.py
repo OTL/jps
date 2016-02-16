@@ -45,7 +45,8 @@ def echo(topic_name, num_print=None, out=sys.stdout, host=jps.DEFAULT_HOST, sub_
             return self._printed
 
     counter = PrintWithCount(out)
-    sub = jps.Subscriber(topic_name, counter.print_and_increment, host=host, sub_port=sub_port)
+    sub = jps.Subscriber(
+        topic_name, counter.print_and_increment, host=host, sub_port=sub_port)
     try:
         while num_print is None or counter.get_count() < num_print:
             sub.spin_once()
@@ -95,7 +96,7 @@ def record(file_path, topic_names=[], host=jps.DEFAULT_HOST, sub_port=jps.DEFAUL
             header = {}
             header['topic_names'] = topic_names
             header['start_date'] = str(datetime.datetime.today())
-            header_string = json.dumps({'header':header})
+            header_string = json.dumps({'header': header})
             tail_removed_header = header_string[0:-1]
             self._output.write(tail_removed_header + ',\n')
             self._output.write(' "data": [\n')
@@ -164,12 +165,15 @@ def topic_command():
         'data', type=str, help='json string data to be published')
     pub_parser.add_argument('--repeat', '-r', help='repeat in hz', type=float)
 
-    echo_parser = command_parsers.add_parser('echo', help='show topic data', parents=[sub_common_parser])
+    echo_parser = command_parsers.add_parser(
+        'echo', help='show topic data', parents=[sub_common_parser])
     echo_parser.add_argument('topic_name', type=str, help='name of topic')
-    echo_parser.add_argument('--num', '-n', help='print N times and exit', type=int,
+    echo_parser.add_argument(
+        '--num', '-n', help='print N times and exit', type=int,
                              default=None)
 
-    list_parser = command_parsers.add_parser('list', help='show topic list', parents=[sub_common_parser])
+    list_parser = command_parsers.add_parser(
+        'list', help='show topic list', parents=[sub_common_parser])
     list_parser.add_argument(
         '--timeout', '-t', help='timeout in sec', type=float,
                              default=1.0)
@@ -189,13 +193,16 @@ def topic_command():
     args = parser.parse_args()
 
     if args.command == 'pub':
-        pub(args.topic_name, args.data, repeat_rate=args.repeat, host=args.host, pub_port=args.publisher_port)
+        pub(args.topic_name, args.data, repeat_rate=args.repeat,
+            host=args.host, pub_port=args.publisher_port)
     elif args.command == 'echo':
-        echo(args.topic_name, args.num, host=args.host, sub_port=args.subscriber_port)
+        echo(args.topic_name, args.num,
+             host=args.host, sub_port=args.subscriber_port)
     elif args.command == 'list':
         show_list(args.timeout, host=args.host, sub_port=args.subscriber_port)
     elif args.command == 'record':
-        record(args.file, args.topic_names, host=args.host, sub_port=args.subscriber_port)
+        record(args.file, args.topic_names,
+               host=args.host, sub_port=args.subscriber_port)
     elif args.command == 'play':
         play(args.file, host=args.host, pub_port=args.publisher_port)
     else:

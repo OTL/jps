@@ -74,8 +74,10 @@ def test_show_list():
 def test_recordplay():
     import tempfile
     import os
-    file_path_all = '{0}/{1}{2}'.format(tempfile.gettempdir(), os.getpid(), 'record_all.json')
-    file_path = '{0}/{1}{2}'.format(tempfile.gettempdir(), os.getpid(), 'record2.json')
+    file_path_all = '{0}/{1}{2}'.format(
+        tempfile.gettempdir(), os.getpid(), 'record_all.json')
+    file_path = '{0}/{1}{2}'.format(
+        tempfile.gettempdir(), os.getpid(), 'record2.json')
     print(file_path_all)
     print(file_path)
     record_all = Process(target=jps.tools.record, args=(file_path_all, []))
@@ -125,7 +127,7 @@ def test_recordplay():
     time.sleep(0.1)
     play.join(2.0)
     sub1.spin_once()
-    
+
     assert holder1.get_msg() == []
     assert sub2.next() == 'b'
 

@@ -15,7 +15,7 @@ class PyTest(TestCommand):
         self.test_suite = True
 
     def run_tests(self):
-        #import here, cause outside the eggs aren't loaded
+        # import here, cause outside the eggs aren't loaded
         import jps
         import os
         import pytest
@@ -39,14 +39,14 @@ setup(name='jps',
       url='http://github.com/OTL/jps',
       packages=find_packages(exclude=['test', 'docs']),
       install_requires=[
-        'zmq',
-        ],
-      tests_require = ['pytest'],
-      cmdclass = {'test': PyTest},
-      entry_points= {
-        'console_scripts': [
-            'jps_forwarder = jps.forwarder:command',
+      'zmq',
+      ],
+      tests_require=['pytest'],
+      cmdclass={'test': PyTest},
+      entry_points={
+      'console_scripts': [
+          'jps_forwarder = jps.forwarder:command',
             'jps_topic = jps.tools:topic_command',
-            ]
-        }
+      ]
+      }
       )

@@ -5,6 +5,7 @@ from .common import DEFAULT_SUB_PORT
 
 
 class ArgumentParser(argparse.ArgumentParser):
+
     '''
     Create ArgumentParser with args (host/subscriber_port/publisher_port)
 
@@ -23,10 +24,14 @@ class ArgumentParser(argparse.ArgumentParser):
     :param publisher add publisher_port (default: True)
 
     '''
+
     def __init__(self, subscriber=True, publisher=True, *args, **kwargs):
         super(ArgumentParser, self).__init__(*args, **kwargs)
-        self.add_argument('--host', type=str, help='fowarder host', default=DEFAULT_HOST)
+        self.add_argument(
+            '--host', type=str, help='fowarder host', default=DEFAULT_HOST)
         if subscriber:
-            self.add_argument('--subscriber_port', type=int, help='subscriber port', default=DEFAULT_SUB_PORT)
+            self.add_argument('--subscriber_port', type=int,
+                              help='subscriber port', default=DEFAULT_SUB_PORT)
         if publisher:
-            self.add_argument('--publisher_port', type=int, help='publisher port', default=DEFAULT_PUB_PORT)
+            self.add_argument(
+                '--publisher_port', type=int, help='publisher port', default=DEFAULT_PUB_PORT)

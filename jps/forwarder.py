@@ -3,6 +3,7 @@ from .args import ArgumentParser
 from .common import DEFAULT_PUB_PORT
 from .common import DEFAULT_SUB_PORT
 
+
 def command():
     import argparse
     parser = ArgumentParser(description='jps forwarder')

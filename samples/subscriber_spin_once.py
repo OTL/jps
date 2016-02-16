@@ -1,6 +1,7 @@
 import jps
 import time
 
+
 def callback(msg):
     print(msg)
 
@@ -11,4 +12,3 @@ try:
         time.sleep(0.1)
 except KeyboardInterrupt:
     pass
-
