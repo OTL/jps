@@ -153,13 +153,8 @@ def topic_command():
     '''command line tool for jps
     '''
     parser = argparse.ArgumentParser(description='json pub/sub tool')
-    common_parser = argparse.ArgumentParser(add_help=False)
-    common_parser.add_argument('--host', type=str, help='master host', default=jps.DEFAULT_HOST)
-    pub_common_parser = argparse.ArgumentParser(add_help=False, parents=[common_parser])
-    pub_common_parser.add_argument('--publisher_port', '-p', type=int, help='publisher port', default=jps.DEFAULT_PUB_PORT)
-    sub_common_parser = argparse.ArgumentParser(add_help=False, parents=[common_parser])
-    sub_common_parser.add_argument('--subscriber_port', '-s', type=int, help='subscriber port', default=jps.DEFAULT_SUB_PORT)
-
+    pub_common_parser = jps.ArgumentParser(subscriber=False, add_help=False)
+    sub_common_parser = jps.ArgumentParser(publisher=False, add_help=False)
     command_parsers = parser.add_subparsers(dest='command', help='command')
 
     pub_parser = command_parsers.add_parser(
@@ -171,8 +166,7 @@ def topic_command():
 
     echo_parser = command_parsers.add_parser('echo', help='show topic data', parents=[sub_common_parser])
     echo_parser.add_argument('topic_name', type=str, help='name of topic')
-    echo_parser.add_argument(
-        '--num', '-n', help='print N times and exit', type=int,
+    echo_parser.add_argument('--num', '-n', help='print N times and exit', type=int,
                              default=None)
 
     list_parser = command_parsers.add_parser('list', help='show topic list', parents=[sub_common_parser])

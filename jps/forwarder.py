@@ -1,13 +1,11 @@
 import zmq
+from .args import ArgumentParser
 from .common import DEFAULT_PUB_PORT
 from .common import DEFAULT_SUB_PORT
 
-
 def command():
     import argparse
-    parser = argparse.ArgumentParser(description='jps forwarder')
-    parser.add_argument('--publisher_port', '-p', type=int, help='publisher port', default=DEFAULT_PUB_PORT)
-    parser.add_argument('--subscriber_port', '-s', type=int, help='subscriber port', default=DEFAULT_SUB_PORT)
+    parser = ArgumentParser(description='jps forwarder')
     args = parser.parse_args()
     main(args.publisher_port, args.subscriber_port)
 

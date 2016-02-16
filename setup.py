@@ -45,7 +45,7 @@ setup(name='jps',
       cmdclass = {'test': PyTest},
       entry_points= {
         'console_scripts': [
-            'jps_forwarder = jps.forwarder:main',
+            'jps_forwarder = jps.forwarder:command',
             'jps_topic = jps.tools:topic_command',
             ]
         }
