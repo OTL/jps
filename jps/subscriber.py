@@ -80,7 +80,7 @@ class Subscriber(object):
         while True:
             socks = dict(self._poller.poll(10))
             if socks.get(self._socket) == zmq.POLLIN:
-                msg = self._socket.recv_string()
+                msg = self._socket.recv()
                 self._callback(msg)
             else:
                 return
@@ -96,7 +96,7 @@ class Subscriber(object):
     def next(self):
         '''receive next data (block until next data)'''
         try:
-            raw_msg = self._socket.recv_string()
+            raw_msg = self._socket.recv()
         except KeyboardInterrupt:
             raise StopIteration()
         msg = self._strip_topic_name_if_not_wildcard(raw_msg)
