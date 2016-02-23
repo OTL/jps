@@ -44,6 +44,8 @@ class Subscriber(object):
         self._poller.register(self._socket, zmq.POLLIN)
 
     def _strip_topic_name_if_not_wildcard(self, raw_msg):
+        # for python3
+        raw_msg = cast_unicode(raw_msg)
         topic, _, msg = raw_msg.partition(' ')
         # wildcard('')
         if self._topic == '':
