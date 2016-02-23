@@ -1,6 +1,5 @@
 import zmq
 from zmq.utils.strtypes import cast_bytes
-from zmq.utils.strtypes import cast_unicode
 import time
 from .common import DEFAULT_SUB_PORT
 from .common import DEFAULT_HOST
@@ -37,15 +36,13 @@ class Subscriber(object):
         self._socket = context.socket(zmq.SUB)
         self._socket.connect('tcp://{host}:{port}'.format(host=host,
                                                           port=sub_port))
-        self._topic = topic_name
-        self._socket.setsockopt(zmq.SUBSCRIBE, cast_bytes(self._topic))
+        self._topic = cast_bytes(topic_name)
+        self._socket.setsockopt(zmq.SUBSCRIBE, self._topic)
         self._user_callback = callback
         self._poller = zmq.Poller()
         self._poller.register(self._socket, zmq.POLLIN)
 
     def _strip_topic_name_if_not_wildcard(self, raw_msg):
-        # for python3
-        raw_msg = cast_unicode(raw_msg)
         topic, _, msg = raw_msg.partition(' ')
         # wildcard('')
         if self._topic == '':

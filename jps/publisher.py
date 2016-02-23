@@ -1,3 +1,4 @@
+
 import zmq
 from zmq.utils.strtypes import cast_bytes
 from .common import DEFAULT_PUB_PORT
@@ -25,7 +26,7 @@ class Publisher(object):
         self._socket = context.socket(zmq.PUB)
         self._socket.connect(
             'tcp://{host}:{port}'.format(host=host, port=pub_port))
-        self._topic = topic_name
+        self._topic = cast_bytes(topic_name)
 
     def publish(self, json_msg):
         '''Publish json_msg to the topic
