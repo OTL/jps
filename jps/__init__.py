@@ -6,6 +6,7 @@ from .common import DEFAULT_SUB_PORT
 from .common import DEFAULT_HOST
 from . import forwarder
 from . import tools
+from . import utils
 
-__all__ = ['Publisher', 'Subscriber', 'ArgumentParser', 'forwarder',
+__all__ = ['Publisher', 'Subscriber', 'ArgumentParser', 'forwarder', 'utils',
            'tools', 'DEFAULT_PUB_PORT', 'DEFAULT_SUB_PORT', 'DEFAULT_HOST']

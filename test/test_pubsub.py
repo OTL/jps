@@ -1,4 +1,5 @@
 import jps
+import json
 import time
 
 
@@ -24,6 +25,31 @@ def test_pubsub_once():
     sub.spin_once()
     assert len(holder.get_msg()) == 1
     assert holder.get_msg()[0] == 'hoge'
+
+
+def test_pubsub_direct_number():
+    holder = MessageHolder()
+    sub = jps.Subscriber('num1', holder)
+    pub = jps.Publisher('num1')
+    time.sleep(0.1)
+    pub.publish(1)
+    time.sleep(0.1)
+    sub.spin_once()
+    assert len(holder.get_msg()) == 1
+    # number will be converted to string, because it is json
+    assert holder.get_msg()[0] == '1'
+
+    
+def test_pubsub_indirect_number():
+    holder = MessageHolder()
+    sub = jps.Subscriber('num1', holder)
+    pub = jps.Publisher('num1')
+    time.sleep(0.1)
+    pub.publish('{"x": 1}')
+    time.sleep(0.1)
+    sub.spin_once()
+    assert len(holder.get_msg()) == 1
+    assert json.loads(holder.get_msg()[0])['x'] == 1
 
 
 def test_pubsub_iterator():
