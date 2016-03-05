@@ -27,6 +27,18 @@ def test_pubsub_once():
     assert holder.get_msg()[0] == 'hoge'
 
 
+def test_pubsub_thread():
+    holder = MessageHolder()
+    sub = jps.Subscriber('thread1', holder)
+    pub = jps.Publisher('thread1')
+    sub.spin(use_thread=True)
+    time.sleep(0.1)
+    pub.publish('hoge')
+    time.sleep(0.1)
+    assert len(holder.get_msg()) == 1
+    assert holder.get_msg()[0] == 'hoge'
+
+
 def test_pubsub_direct_number():
     holder = MessageHolder()
     sub = jps.Subscriber('num1', holder)

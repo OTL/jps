@@ -3,6 +3,7 @@ from zmq.utils.strtypes import cast_bytes
 import time
 from .common import DEFAULT_SUB_PORT
 from .common import DEFAULT_HOST
+import threading
 
 
 class Subscriber(object):
@@ -39,6 +40,7 @@ class Subscriber(object):
         self._topic = cast_bytes(topic_name)
         self._socket.setsockopt(zmq.SUBSCRIBE, self._topic)
         self._user_callback = callback
+        self._thread = None
         self._poller = zmq.Poller()
         self._poller.register(self._socket, zmq.POLLIN)
 
@@ -84,8 +86,21 @@ class Subscriber(object):
             else:
                 return
 
-    def spin(self):
-        '''call callback for all data forever (until \C-c)'''
+    def spin(self, use_thread=False):
+        '''call callback for all data forever (until \C-c)
+
+        :param use_thread: use thread for spin (do not block)
+        '''
+        if use_thread:
+            if self._thread is not None:
+                raise 'spin called twice'
+            self._thread = threading.Thread(target=self._spin_internal)
+            self._thread.setDaemon(True)
+            self._thread.start()
+        else:
+            self._spin_internal()
+
+    def _spin_internal(self):
         for msg in self:
             self._user_callback(msg)
 
