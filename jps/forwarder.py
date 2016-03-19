@@ -5,7 +5,6 @@ from .common import DEFAULT_SUB_PORT
 
 
 def command():
-    import argparse
     parser = ArgumentParser(description='jps forwarder')
     args = parser.parse_args()
     main(args.publisher_port, args.subscriber_port)

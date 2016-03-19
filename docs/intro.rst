@@ -14,7 +14,7 @@ You can use pip to install jps ::
 
   $ sudo pip install jps
 
-It installs jps python module, ``jps_fowarder`` and :ref:`jps_topic` command.
+It installs jps python module, ``jps_master`` and :ref:`jps_topic` command.
 
 How to write pub/sub
 --------------------
@@ -47,7 +47,7 @@ How to run and use tools
 
 You need three consoles to test the program. ::
 
-  $ jps_forwarder
+  $ jps_master
   $ python publisher.py
   $ python subscriber.py
 

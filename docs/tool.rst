@@ -26,7 +26,7 @@ If you want to know how to use, try ``-h`` option. ::
     -h, --help            show this help message and exit
 
 
-For all commands, you can set the host of `jps_forwarder` by `--host HOST`,
+For all commands, you can set the host of `jps_master` by `--host HOST`,
 if you want to use jps from remote computer.
 
 jps_topic pub

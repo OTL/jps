@@ -2,6 +2,8 @@ import argparse
 from .common import DEFAULT_HOST
 from .common import DEFAULT_PUB_PORT
 from .common import DEFAULT_SUB_PORT
+from .common import DEFAULT_RES_PORT
+from .common import DEFAULT_REQ_PORT
 
 
 class ArgumentParser(argparse.ArgumentParser):
@@ -25,7 +27,8 @@ class ArgumentParser(argparse.ArgumentParser):
 
     '''
 
-    def __init__(self, subscriber=True, publisher=True, *args, **kwargs):
+    def __init__(self, subscriber=True, publisher=True,
+                 service=False, *args, **kwargs):
         super(ArgumentParser, self).__init__(*args, **kwargs)
         self.add_argument(
             '--host', type=str, help='fowarder host', default=DEFAULT_HOST)
@@ -35,3 +38,8 @@ class ArgumentParser(argparse.ArgumentParser):
         if publisher:
             self.add_argument(
                 '--publisher_port', type=int, help='publisher port', default=DEFAULT_PUB_PORT)
+        if service:
+            self.add_argument(
+                '--request_port', type=int, help='request port', default=DEFAULT_REQ_PORT)
+            self.add_argument(
+                '--response_port', type=int, help='response port', default=DEFAULT_RES_PORT)

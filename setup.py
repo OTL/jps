@@ -25,9 +25,12 @@ class PyTest(TestCommand):
         from multiprocessing import Process
         forwarder = Process(target=jps.forwarder.main)
         forwarder.start()
+        queue = Process(target=jps.queue.main)
+        queue.start()
         time.sleep(0.1)
         errno = pytest.main(self.pytest_args)
         os.kill(forwarder.pid, signal.SIGINT)
+        os.kill(queue.pid, signal.SIGINT)
         sys.exit(errno)
 
 
@@ -44,9 +47,9 @@ setup(name='jps',
       tests_require=['pytest'],
       cmdclass={'test': PyTest},
       entry_points={
-      'console_scripts': [
-          'jps_forwarder = jps.forwarder:command',
-            'jps_topic = jps.tools:topic_command',
-      ]
+          'console_scripts': [
+              'jps_master = jps.master:command',
+              'jps_topic = jps.tools:topic_command',
+          ]
       }
-      )
+)
