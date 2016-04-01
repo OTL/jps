@@ -70,14 +70,14 @@ def test_show_list():
     assert list_output.getvalue() == '/test_topic1\n/test_topic2\n'
     list_output.close()
 
-def atest_show_list_with_suffix():
-    orig_suffix = jps.env.get_topic_suffix()
-    os.environ['JPS_SUFFIX'] = '.r123'
+def test_show_list_with_suffix():
     list_output = StringIO()
     show_thread = Thread(target=jps.tools.show_list, args=(0.5, list_output))
     show_thread.daemon = True
     show_thread.start()
     time.sleep(0.1)
+    orig_suffix = jps.env.get_topic_suffix()
+    os.environ['JPS_SUFFIX'] = '.r123'
     p1 = jps.Publisher('/test_topic1')
     p2 = jps.Publisher('/test_topic2')
     time.sleep(0.1)
