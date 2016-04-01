@@ -24,8 +24,10 @@ class PyTest(TestCommand):
         import time
         from multiprocessing import Process
         forwarder = Process(target=jps.forwarder.main)
+        forwarder.daemon = True
         forwarder.start()
         queue = Process(target=jps.queue.main)
+        queue.daemon = True
         queue.start()
         time.sleep(0.1)
         errno = pytest.main(self.pytest_args)

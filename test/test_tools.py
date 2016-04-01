@@ -70,6 +70,24 @@ def test_show_list():
     assert list_output.getvalue() == '/test_topic1\n/test_topic2\n'
     list_output.close()
 
+def atest_show_list_with_suffix():
+    orig_suffix = jps.env.get_topic_suffix()
+    os.environ['JPS_SUFFIX'] = '.r123'
+    list_output = StringIO()
+    show_thread = Thread(target=jps.tools.show_list, args=(0.5, list_output))
+    show_thread.daemon = True
+    show_thread.start()
+    time.sleep(0.1)
+    p1 = jps.Publisher('/test_topic1')
+    p2 = jps.Publisher('/test_topic2')
+    time.sleep(0.1)
+    p1.publish('{a}')
+    p2.publish('{b}')
+
+    show_thread.join(2.0)
+    assert list_output.getvalue() == '/test_topic1.r123\n/test_topic2.r123\n'
+    list_output.close()
+    os.environ['JPS_SUFFIX'] = orig_suffix
 
 def test_recordplay():
     import tempfile
@@ -81,8 +99,10 @@ def test_recordplay():
     print(file_path_all)
     print(file_path)
     record_all = Process(target=jps.tools.record, args=(file_path_all, []))
+    record_all.daemon = True
     record_all.start()
     record = Process(target=jps.tools.record, args=(file_path, ['/test_rec2']))
+    record.daemon = True
     record.start()
 
     time.sleep(0.5)
@@ -115,6 +135,7 @@ def test_recordplay():
     sub2 = jps.Subscriber('/test_rec2')
     time.sleep(0.1)
     play_all = Process(target=jps.tools.play, args=[file_path_all])
+    play_all.daemon = True
     play_all.start()
     time.sleep(0.1)
     play_all.join(2.0)
@@ -123,6 +144,7 @@ def test_recordplay():
     assert sub2.next() == 'b'
 
     play = Process(target=jps.tools.play, args=[file_path])
+    play.daemon = True
     play.start()
     time.sleep(0.1)
     play.join(2.0)

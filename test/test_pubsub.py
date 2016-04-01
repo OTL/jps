@@ -1,6 +1,8 @@
-import jps
 import json
+import os
 import time
+
+import jps
 
 
 class MessageHolder(object):
@@ -13,6 +15,17 @@ class MessageHolder(object):
 
     def get_msg(self):
         return self._saved_msg
+
+
+class MessageHolderWithWildCard(object):
+
+    def __init__(self):
+        self.msgs = []
+        self.topics = []
+
+    def __call__(self, msg, topic):
+        self.msgs.append(msg)
+        self.topics.append(topic)
 
 
 def test_pubsub_once():
@@ -51,7 +64,7 @@ def test_pubsub_direct_number():
     # number will be converted to string, because it is json
     assert holder.get_msg()[0] == '1'
 
-    
+
 def test_pubsub_indirect_number():
     holder = MessageHolder()
     sub = jps.Subscriber('num1', holder)
@@ -135,3 +148,19 @@ def test_pubsub_multi():
     assert holder.get_msg()[0] == 'hoge0'
     assert holder.get_msg()[1] == 'hoge1'
     assert holder.get_msg()[2] == 'hoge2'
+
+
+def test_pubsub_wildcard_suffix():
+    holder = MessageHolderWithWildCard()
+    sub = jps.Subscriber('/hoge*', holder)
+    pub1 = jps.Publisher('/hoge1')
+    pub2 = jps.Publisher('/hoge2')
+    pub3 = jps.Publisher('/hogi1')
+    time.sleep(0.01)
+    pub1.publish('data1')
+    pub2.publish('data2')
+    pub3.publish('data3')
+    sub.spin_once()
+    assert len(holder.msgs) == 2
+    assert 'data1' in holder.msgs
+    assert 'data2' in holder.msgs

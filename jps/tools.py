@@ -63,8 +63,7 @@ def show_list(timeout_in_sec, out=sys.stdout, host=jps.DEFAULT_HOST, sub_port=jp
         def __init__(self):
             self._topic_names = set()
 
-        def callback(self, raw_msg):
-            topic, _, msg = raw_msg.partition(' ')
+        def callback(self, msg, topic):
             self._topic_names.add(topic)
 
         def get_topic_names(self):
@@ -73,7 +72,7 @@ def show_list(timeout_in_sec, out=sys.stdout, host=jps.DEFAULT_HOST, sub_port=jp
             return names
 
     store = TopicNameStore()
-    sub = jps.Subscriber('', store.callback, host=host, sub_port=sub_port)
+    sub = jps.Subscriber('*', store.callback, host=host, sub_port=sub_port)
     sleep_sec = 0.01
     for i in range(int(timeout_in_sec / sleep_sec)):
         sub.spin_once()
@@ -102,10 +101,10 @@ def record(file_path, topic_names=[], host=jps.DEFAULT_HOST, sub_port=jps.DEFAUL
             self._output.write(' "data": [\n')
             self._has_no_data = True
 
-        def callback(self, raw_msg):
+        def callback(self, msg, topic):
             if self._output.closed:
                 return
-            topic, _, msg = raw_msg.partition(' ')
+            raw_msg = '{topic} {msg}'.format(topic=topic, msg=msg)
             if not self._topic_names or topic in self._topic_names:
                 if not self._has_no_data:
                     self._output.write(',\n')
@@ -123,7 +122,7 @@ def record(file_path, topic_names=[], host=jps.DEFAULT_HOST, sub_port=jps.DEFAUL
             sys.exit(0)
 
     writer = TopicRecorder(file_path, topic_names)
-    sub = jps.Subscriber('', writer.callback, host=host, sub_port=sub_port)
+    sub = jps.Subscriber('*', writer.callback, host=host, sub_port=sub_port)
     sub.spin()
     writer.close()
 
@@ -131,7 +130,7 @@ def record(file_path, topic_names=[], host=jps.DEFAULT_HOST, sub_port=jps.DEFAUL
 def play(file_path, host=jps.DEFAULT_HOST, pub_port=jps.DEFAULT_PUB_PORT):
     '''replay the recorded data by record()
     '''
-    pub = jps.Publisher('', host=host, pub_port=pub_port)
+    pub = jps.Publisher('*', host=host, pub_port=pub_port)
     time.sleep(0.2)
     last_time = None
     print('start publishing file {}'.format(file_path))

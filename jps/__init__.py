@@ -14,10 +14,11 @@ from . import master
 from . import tools
 from . import utils
 from . import launcher
+from . import env
 
 
 __all__ = ['Publisher', 'Subscriber', 'ArgumentParser',
            'ServiceServer', 'ServiceClient',
-           'forwarder', 'queue', 'master', 'utils', 'launcher', 'tools',
+           'forwarder', 'queue', 'master', 'utils', 'launcher', 'tools', 'env',
            'DEFAULT_PUB_PORT', 'DEFAULT_SUB_PORT', 'DEFAULT_HOST',
            'DEFAULT_REQ_PORT', 'DEFAULT_RES_PORT']

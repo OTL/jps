@@ -1,8 +1,9 @@
-
 import zmq
 from zmq.utils.strtypes import cast_bytes
+
 from .common import DEFAULT_PUB_PORT
 from .common import DEFAULT_HOST
+from .env import get_topic_suffix
 
 
 class Publisher(object):
@@ -26,7 +27,7 @@ class Publisher(object):
         self._socket = context.socket(zmq.PUB)
         self._socket.connect(
             'tcp://{host}:{port}'.format(host=host, port=pub_port))
-        self._topic = cast_bytes(topic_name)
+        self._topic = cast_bytes(topic_name + get_topic_suffix())
 
     def publish(self, json_msg):
         '''Publish json_msg to the topic
@@ -40,7 +41,7 @@ class Publisher(object):
 
         :param json_msg: data to be published. This is ok if the data is not json.
         '''
-        if self._topic == '':
+        if self._topic == '*':
             # special case for publish everything
             msg = json_msg
         else:

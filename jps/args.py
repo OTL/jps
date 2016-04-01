@@ -32,6 +32,8 @@ class ArgumentParser(argparse.ArgumentParser):
         super(ArgumentParser, self).__init__(*args, **kwargs)
         self.add_argument(
             '--host', type=str, help='fowarder host', default=DEFAULT_HOST)
+        self.add_argument(
+            '--prefix', type=str, help='add prefix for topics', default='')
         if subscriber:
             self.add_argument('--subscriber_port', type=int,
                               help='subscriber port', default=DEFAULT_SUB_PORT)
