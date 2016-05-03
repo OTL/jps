@@ -19,6 +19,7 @@ Contents:
    simple_subscriber
    tool
    jps
+   env
 
 
 Indices and tables
