@@ -2,7 +2,7 @@ import zmq
 from zmq.utils.strtypes import cast_bytes
 
 from .common import DEFAULT_PUB_PORT
-from .common import DEFAULT_HOST
+from .env import get_master_host
 from .env import get_topic_suffix
 
 
@@ -20,7 +20,7 @@ class Publisher(object):
     :param pub_port: port of subscriber/forwarder
     '''
 
-    def __init__(self, topic_name, host=DEFAULT_HOST, pub_port=DEFAULT_PUB_PORT):
+    def __init__(self, topic_name, host=get_master_host(), pub_port=DEFAULT_PUB_PORT):
         if topic_name.count(' '):
             raise Exception('you can\'t use " " for topic_name')
         context = zmq.Context()

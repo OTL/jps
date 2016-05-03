@@ -3,6 +3,7 @@ import json
 from .publisher import Publisher
 from .common import DEFAULT_PUB_PORT
 from .common import DEFAULT_HOST
+from .env import get_master_host
 
 
 class JsonMultiplePublisher(object):
@@ -15,7 +16,7 @@ class JsonMultiplePublisher(object):
     >>> p.publish('{"topic1": 1.0, "topic2": {"x": 0.1}}')
     '''
 
-    def __init__(self, host=DEFAULT_HOST, pub_port=DEFAULT_PUB_PORT):
+    def __init__(self, host=get_master_host(), pub_port=DEFAULT_PUB_PORT):
         self._pub = Publisher('*', host=host, pub_port=pub_port)
 
     def publish(self, json_msg):

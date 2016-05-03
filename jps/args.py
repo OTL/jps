@@ -1,5 +1,5 @@
 import argparse
-from .common import DEFAULT_HOST
+from .env import get_master_host
 from .common import DEFAULT_PUB_PORT
 from .common import DEFAULT_SUB_PORT
 from .common import DEFAULT_RES_PORT
@@ -31,7 +31,7 @@ class ArgumentParser(argparse.ArgumentParser):
                  service=False, *args, **kwargs):
         super(ArgumentParser, self).__init__(*args, **kwargs)
         self.add_argument(
-            '--host', type=str, help='fowarder host', default=DEFAULT_HOST)
+            '--host', type=str, help='fowarder host', default=get_master_host())
         self.add_argument(
             '--prefix', type=str, help='add prefix for topics', default='')
         if subscriber:

@@ -8,7 +8,7 @@ import sys
 import time
 
 
-def pub(topic_name, json_msg, repeat_rate=None, host=jps.DEFAULT_HOST, pub_port=jps.DEFAULT_PUB_PORT):
+def pub(topic_name, json_msg, repeat_rate=None, host=jps.env.get_master_host(), pub_port=jps.DEFAULT_PUB_PORT):
     '''publishes the data to the topic
 
     :param topic_name: name of the topic
@@ -28,7 +28,7 @@ def pub(topic_name, json_msg, repeat_rate=None, host=jps.DEFAULT_HOST, pub_port=
             pass
 
 
-def echo(topic_name, num_print=None, out=sys.stdout, host=jps.DEFAULT_HOST, sub_port=jps.DEFAULT_SUB_PORT):
+def echo(topic_name, num_print=None, out=sys.stdout, host=jps.env.get_master_host(), sub_port=jps.DEFAULT_SUB_PORT):
     '''print the data for the given topic forever
     '''
     class PrintWithCount(object):
@@ -55,7 +55,7 @@ def echo(topic_name, num_print=None, out=sys.stdout, host=jps.DEFAULT_HOST, sub_
         pass
 
 
-def show_list(timeout_in_sec, out=sys.stdout, host=jps.DEFAULT_HOST, sub_port=jps.DEFAULT_SUB_PORT):
+def show_list(timeout_in_sec, out=sys.stdout, host=jps.env.get_master_host(), sub_port=jps.DEFAULT_SUB_PORT):
     '''get the name list of the topics, and print it
     '''
     class TopicNameStore(object):
@@ -81,7 +81,7 @@ def show_list(timeout_in_sec, out=sys.stdout, host=jps.DEFAULT_HOST, sub_port=jp
         out.write('{}\n'.format(name))
 
 
-def record(file_path, topic_names=[], host=jps.DEFAULT_HOST, sub_port=jps.DEFAULT_SUB_PORT):
+def record(file_path, topic_names=[], host=jps.env.get_master_host(), sub_port=jps.DEFAULT_SUB_PORT):
     '''record the topic data to the file
     '''
     class TopicRecorder(object):
@@ -127,7 +127,7 @@ def record(file_path, topic_names=[], host=jps.DEFAULT_HOST, sub_port=jps.DEFAUL
     writer.close()
 
 
-def play(file_path, host=jps.DEFAULT_HOST, pub_port=jps.DEFAULT_PUB_PORT):
+def play(file_path, host=jps.env.get_master_host(), pub_port=jps.DEFAULT_PUB_PORT):
     '''replay the recorded data by record()
     '''
     pub = jps.Publisher('*', host=host, pub_port=pub_port)
