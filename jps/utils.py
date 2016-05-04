@@ -27,3 +27,14 @@ class JsonMultiplePublisher(object):
         for topic, value in pyobj.items():
             msg = '{topic} {data}'.format(topic=topic, data=json.dumps(value))
             self._pub.publish(msg)
+
+
+class MultiplePublisher(object):
+    def __init__(self, base_topic_name):
+        self._publishers = {}
+        self._base_topic_name = base_topic_name
+
+    def publish(self, msg, topic_suffix=''):
+        if topic_suffix not in self._publishers:
+            self._publishers[topic_suffix] = Publisher(self._base_topic_name + topic_suffix)
+        self._publishers[topic_suffix].publish(msg)
