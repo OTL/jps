@@ -16,7 +16,9 @@ class ServiceServer(object):
     >>> service = jps.ServiceServer(callback)
     >>> service.spin()
     '''
-    def __init__(self, callback, host=get_master_host(), res_port=DEFAULT_RES_PORT):
+    def __init__(self, callback, host=None, res_port=DEFAULT_RES_PORT):
+        if host is None:
+            host = get_master_host()
         context = zmq.Context()
         self._socket = context.socket(zmq.REP)
         self._socket.connect('tcp://{host}:{port}'.format(host=host, port=res_port))
@@ -49,7 +51,9 @@ class ServiceServer(object):
 
 class ServiceClient(object):
 
-    def __init__(self, host=get_master_host(), req_port=DEFAULT_REQ_PORT):
+    def __init__(self, host=None, req_port=DEFAULT_REQ_PORT):
+        if host is None:
+            host = get_master_host()
         context = zmq.Context()
         self._socket = context.socket(zmq.REQ)
         self._socket.connect('tcp://{host}:{port}'.format(host=host, port=req_port))

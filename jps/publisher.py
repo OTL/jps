@@ -20,9 +20,11 @@ class Publisher(object):
     :param pub_port: port of subscriber/forwarder
     '''
 
-    def __init__(self, topic_name, host=get_master_host(), pub_port=DEFAULT_PUB_PORT):
+    def __init__(self, topic_name, host=None, pub_port=DEFAULT_PUB_PORT):
         if topic_name.count(' '):
             raise Exception('you can\'t use " " for topic_name')
+        if host is None:
+            host = get_master_host()
         context = zmq.Context()
         self._socket = context.socket(zmq.PUB)
         self._socket.connect(

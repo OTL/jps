@@ -32,10 +32,11 @@ class Subscriber(object):
     :param sub_port: port of publisher/forwarder
     '''
 
-    def __init__(self, topic_name, callback=None, host=get_master_host(),
-                 sub_port=DEFAULT_SUB_PORT):
+    def __init__(self, topic_name, callback=None, host=None, sub_port=DEFAULT_SUB_PORT):
         if topic_name.count(' '):
             raise Exception('you can\'t use " " for topic_name')
+        if host is None:
+            host = get_master_host()
         context = zmq.Context()
         self._socket = context.socket(zmq.SUB)
         self._socket.connect('tcp://{host}:{port}'.format(host=host,
