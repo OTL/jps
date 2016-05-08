@@ -36,3 +36,13 @@ def test_multi_pubsub_once():
     assert obj['x'] == 3
     assert len(holder3.get_msg()) == 1
     assert json.loads(holder3.get_msg()[0]) == 5
+
+
+def test_to_obj():
+    msg = '{"aa": 1, "bb": ["hoge", "hogi"], "cc": {"cc1" : 50}}'
+    converted = jps.utils.to_obj(msg)
+    assert converted.aa == 1
+    assert converted.bb[0] == 'hoge'
+    assert converted.bb[1] == 'hogi'
+    assert len(converted.bb) == 2
+    assert converted.cc.cc1 == 50

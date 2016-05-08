@@ -38,3 +38,16 @@ class MultiplePublisher(object):
         if topic_suffix not in self._publishers:
             self._publishers[topic_suffix] = Publisher(self._base_topic_name + topic_suffix)
         self._publishers[topic_suffix].publish(msg)
+
+
+def to_obj(msg):
+    class _obj(object):
+        def __init__(self, d):
+            for a, b in d.iteritems():
+                if isinstance(b, (list, tuple)):
+                    setattr(self, a, [_obj(x) if isinstance(x, dict) else x for x in b])
+                else:
+                    setattr(self, a, _obj(b) if isinstance(b, dict) else b)
+
+    json_obj = json.loads(msg)
+    return _obj(json_obj)
