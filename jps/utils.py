@@ -48,6 +48,7 @@ def to_obj(msg):
                     setattr(self, a, [_obj(x) if isinstance(x, dict) else x for x in b])
                 else:
                     setattr(self, a, _obj(b) if isinstance(b, dict) else b)
-
     json_obj = json.loads(msg)
+    if isinstance(json_obj, (list)):
+        return [_obj(x) for x in json_obj]
     return _obj(json_obj)
