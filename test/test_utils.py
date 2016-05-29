@@ -46,3 +46,36 @@ def test_to_obj():
     assert converted.bb[1] == 'hogi'
     assert len(converted.bb) == 2
     assert converted.cc.cc1 == 50
+    # todo: do
+    #   json = converted.to_json()
+    #   assert json == msg
+
+# todo
+#def test_to_obj_list():
+#    msg = '["hoge", "hogi"]'
+#    bb = jps.utils.to_obj(msg)
+#    assert len(bb) == 2
+#    assert bb[0] == 'hoge'
+#    assert bb[1] == 'hogi'
+#    json = bb.to_json()
+#    assert json == msg
+
+def test_to_obj_list():
+    msg = '[{"hoge": 1}, {"hogi": 2}]'
+    bb = jps.utils.to_obj(msg)
+    assert len(bb) == 2
+    assert bb[0].hoge == 1
+    assert bb[1].hogi == 2
+#  todo: list support
+#    json = bb.to_json()
+#    assert json == msg
+
+def test_to_obj_simple():
+    msg = '{"aa": 1, "cc": 3, "bb": 2}'
+    converted = jps.utils.to_obj(msg)
+    assert converted.aa == 1
+    assert converted.bb == 2
+    assert converted.cc == 3
+    # works only super simple case
+    json = converted.to_json()
+    assert json == msg
