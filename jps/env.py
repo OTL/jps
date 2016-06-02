@@ -1,5 +1,7 @@
 import os
 from .common import DEFAULT_HOST
+from .common import DEFAULT_PUB_PORT
+from .common import DEFAULT_SUB_PORT
 
 def get_topic_suffix():
     return os.environ.get('JPS_SUFFIX', '')
@@ -9,3 +11,9 @@ def get_topic_prefix():
 
 def get_master_host():
     return os.environ.get('JPS_MASTER_HOST', DEFAULT_HOST)
+
+def get_pub_port():
+    return os.environ.get('JPS_MASTER_PUB_PORT', DEFAULT_PUB_PORT)
+
+def get_sub_port():
+    return os.environ.get('JPS_MASTER_SUB_PORT', DEFAULT_SUB_PORT)

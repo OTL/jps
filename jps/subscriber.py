@@ -4,8 +4,8 @@ import time
 import zmq
 from zmq.utils.strtypes import cast_bytes
 
-from .common import DEFAULT_SUB_PORT
 from .env import get_master_host
+from .env import get_sub_port
 from .env import get_topic_suffix
 
 
@@ -32,11 +32,13 @@ class Subscriber(object):
     :param sub_port: port of publisher/forwarder
     '''
 
-    def __init__(self, topic_name, callback=None, host=None, sub_port=DEFAULT_SUB_PORT):
+    def __init__(self, topic_name, callback=None, host=None, sub_port=None):
         if topic_name.count(' '):
             raise Exception('you can\'t use " " for topic_name')
         if host is None:
             host = get_master_host()
+        if sub_port is None:
+            sub_port = get_sub_port()
         context = zmq.Context()
         self._socket = context.socket(zmq.SUB)
         self._socket.connect('tcp://{host}:{port}'.format(host=host,
