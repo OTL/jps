@@ -51,12 +51,14 @@ def test_to_obj():
     #   assert json == msg
 
 # todo
-#def test_to_obj_list():
-#    msg = '["hoge", "hogi"]'
-#    bb = jps.utils.to_obj(msg)
-#    assert len(bb) == 2
-#    assert bb[0] == 'hoge'
-#    assert bb[1] == 'hogi'
+def test_to_obj_list():
+    msg = '["hoge", "hogi", {"atr1": "val2", "atr2": 1.0}]'
+    bb = jps.utils.to_obj(msg)
+    assert len(bb) == 2
+    assert bb[0] == 'hoge'
+    assert bb[1] == 'hogi'
+    assert bb[2].atr1 == 'val2'
+    assert bb[2].atr2 == 1.0
 #    json = bb.to_json()
 #    assert json == msg
 

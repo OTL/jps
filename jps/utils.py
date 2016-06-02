@@ -44,14 +44,23 @@ def to_obj(msg):
     class _obj(object):
         def __init__(self, d):
             for a, b in d.iteritems():
-                if isinstance(b, (list, tuple)):
-                    setattr(self, a, [_obj(x) if isinstance(x, dict) else x for x in b])
-                else:
-                    setattr(self, a, _obj(b) if isinstance(b, dict) else b)
+                setattr(self, a, _to_obj(b))
+
         def to_json(self):
             return json.dumps(self.__dict__)
 
+        def __str__(self):
+            return self.to_json()
+
+        def __repr__(self):
+            return self.to_json()
+
+    def _to_obj(json_dict_or_list):
+        if isinstance(json_dict_or_list, (list, tuple)):
+            return [_to_obj(x) for x in json_dict_or_list]
+        if isinstance(json_dict_or_list, (dict)):
+            return _obj(json_dict_or_list)
+        return json_dict_or_list
+
     json_obj = json.loads(msg)
-    if isinstance(json_obj, (list)):
-        return [_obj(x) for x in json_obj]
-    return _obj(json_obj)
+    return _to_obj(json_obj)
