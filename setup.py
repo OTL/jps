@@ -44,7 +44,7 @@ setup(name='jps',
       url='http://github.com/OTL/jps',
       packages=find_packages(exclude=['test', 'docs']),
       install_requires=[
-      'zmq',
+          'zmq',
       ],
       tests_require=['pytest'],
       cmdclass={'test': PyTest},

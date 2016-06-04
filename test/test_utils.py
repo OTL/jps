@@ -79,5 +79,5 @@ def test_to_obj_simple():
     assert converted.bb == 2
     assert converted.cc == 3
     # works only super simple case
-    json = converted.to_json()
-    assert json == msg
+    json1 = converted.to_json()
+    assert json1 == msg

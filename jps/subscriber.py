@@ -7,6 +7,7 @@ from zmq.utils.strtypes import cast_bytes
 from .env import get_master_host
 from .env import get_sub_port
 from .env import get_topic_suffix
+from .env import get_default_deserializer
 
 
 class Subscriber(object):
@@ -32,13 +33,17 @@ class Subscriber(object):
     :param sub_port: port of publisher/forwarder
     '''
 
-    def __init__(self, topic_name, callback=None, host=None, sub_port=None):
+    def __init__(self, topic_name, callback=None, host=None, sub_port=None,
+                 deserializer='DEFAULT'):
         if topic_name.count(' '):
             raise Exception('you can\'t use " " for topic_name')
         if host is None:
             host = get_master_host()
         if sub_port is None:
             sub_port = get_sub_port()
+        if deserializer is 'DEFAULT':
+            deserializer = get_default_deserializer()
+        self._deserializer = deserializer
         context = zmq.Context()
         self._socket = context.socket(zmq.SUB)
         self._socket.connect('tcp://{host}:{port}'.format(host=host,
@@ -63,15 +68,20 @@ class Subscriber(object):
             return (msg, topic)
         return (None, topic)
 
+    def deserialize(self, msg):
+        if self._deserializer is not None:
+            return self._deserializer(msg)
+        return msg
+    
     def _callback(self, raw_msg):
         if self._user_callback is None:
             return
         msg, topic_name = self._strip_topic_name_if_not_wildcard(raw_msg)
         if msg is not None:
             if self.has_wildcard_in_topic():
-                self._user_callback(msg, topic_name)
+                self._user_callback(self.deserialize(msg), topic_name)
             else:
-                self._user_callback(msg)
+                self._user_callback(self.deserialize(msg))
 
     def spin_once(self):
         '''Read the queued data and call the callback for them.
@@ -118,7 +128,7 @@ class Subscriber(object):
             if self.has_wildcard_in_topic():
                 self._user_callback(*msg)
             else:
-                self._user_callback(msg)
+                self._user_callback(self.deserialize(msg))
 
     def __iter__(self):
         return self
@@ -133,9 +143,9 @@ class Subscriber(object):
         if msg is None:
             return self.next()
         if self.has_wildcard_in_topic():
-            return (msg, topic_name)
+            return (self.deserialize(msg), topic_name)
         else:
-            return msg
+            return self.deserialize(msg)
 
     # for python3
     __next__ = next

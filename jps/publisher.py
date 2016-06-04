@@ -4,6 +4,7 @@ from zmq.utils.strtypes import cast_bytes
 from .env import get_master_host
 from .env import get_pub_port
 from .env import get_topic_suffix
+from .env import get_default_serializer
 
 
 class Publisher(object):
@@ -20,21 +21,25 @@ class Publisher(object):
     :param pub_port: port of subscriber/forwarder
     '''
 
-    def __init__(self, topic_name, host=None, pub_port=None):
+    def __init__(self, topic_name, host=None, pub_port=None,
+                 serializer='DEFAULT'):
         if topic_name.count(' '):
             raise Exception('you can\'t use " " for topic_name')
         if host is None:
             host = get_master_host()
         if pub_port is None:
             pub_port = get_pub_port()
+        if serializer is 'DEFAULT':
+            serializer = get_default_serializer()
+        self._serializer = serializer
         context = zmq.Context()
         self._socket = context.socket(zmq.PUB)
         self._socket.connect(
             'tcp://{host}:{port}'.format(host=host, port=pub_port))
         self._topic = cast_bytes(topic_name + get_topic_suffix())
 
-    def publish(self, json_msg):
-        '''Publish json_msg to the topic
+    def publish(self, payload):
+        '''Publish payload to the topic
 
         .. note:: If you publishes just after creating Publisher instance, it will causes
            lost of message. You have to add sleep if you just want to publish once.
@@ -43,11 +48,13 @@ class Publisher(object):
            >>> time.sleep(0.1)
            >>> pub.publish('{data}')
 
-        :param json_msg: data to be published. This is ok if the data is not json.
+        :param payload: data to be published. This is ok if the data is not json.
         '''
+        if self._serializer is not None:
+            payload = self._serializer(payload)
         if self._topic == '*':
             # special case for publish everything
-            msg = json_msg
+            msg = payload
         else:
-            msg = '{topic} {json}'.format(topic=self._topic, json=json_msg)
+            msg = '{topic} {data}'.format(topic=self._topic, data=payload)
         self._socket.send(cast_bytes(msg))

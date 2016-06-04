@@ -1,7 +1,10 @@
+import json
 import os
+
 from .common import DEFAULT_HOST
 from .common import DEFAULT_PUB_PORT
 from .common import DEFAULT_SUB_PORT
+
 
 def get_topic_suffix():
     return os.environ.get('JPS_SUFFIX', '')
@@ -17,3 +20,15 @@ def get_pub_port():
 
 def get_sub_port():
     return os.environ.get('JPS_MASTER_SUB_PORT', DEFAULT_SUB_PORT)
+
+def get_default_serializer():
+    serialize = os.environ.get('JPS_SERIALIZE', 'no')
+    if serialize == 'json':
+        return json.dumps
+    return None
+
+def get_default_deserializer():
+    serialize = os.environ.get('JPS_SERIALIZE', 'no')
+    if serialize == 'json':
+        return json.loads
+    return None

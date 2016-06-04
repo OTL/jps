@@ -4,6 +4,8 @@ from .publisher import Publisher
 from .common import DEFAULT_PUB_PORT
 from .common import DEFAULT_HOST
 from .env import get_master_host
+from .json_utils import to_obj
+from .json_utils import dict_to_obj
 
 
 class JsonMultiplePublisher(object):
@@ -38,29 +40,3 @@ class MultiplePublisher(object):
         if topic_suffix not in self._publishers:
             self._publishers[topic_suffix] = Publisher(self._base_topic_name + topic_suffix)
         self._publishers[topic_suffix].publish(msg)
-
-
-def to_obj(msg):
-    class _obj(object):
-        def __init__(self, d):
-            for a, b in d.iteritems():
-                setattr(self, a, _to_obj(b))
-
-        def to_json(self):
-            return json.dumps(self.__dict__)
-
-        def __str__(self):
-            return self.to_json()
-
-        def __repr__(self):
-            return self.to_json()
-
-    def _to_obj(json_dict_or_list):
-        if isinstance(json_dict_or_list, (list, tuple)):
-            return [_to_obj(x) for x in json_dict_or_list]
-        if isinstance(json_dict_or_list, (dict)):
-            return _obj(json_dict_or_list)
-        return json_dict_or_list
-
-    json_obj = json.loads(msg)
-    return _to_obj(json_obj)
