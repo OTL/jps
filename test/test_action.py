@@ -53,4 +53,22 @@ def test_server_client():
     future = c('call1')
     # do something
     result = future.wait()
-    assert result.endswith('call1hoge')
+    assert result == 'call1hoge'
+
+
+def test_server_multi_client():
+    def callback(msg):
+        return msg + '_hoge'
+    s = jps.ActionServer('action3', callback)
+    s.spin(use_thread=True)
+    time.sleep(0.1)
+    c1 = jps.ActionClient('action2')
+    c2 = jps.ActionClient('action2')
+    time.sleep(0.1)
+    future1 = c1('call1')
+    future2 = c2('call2')
+    # do something
+    result2 = future2.wait()
+    result1 = future1.wait()
+    assert result1 == 'call1_hoge'
+    assert result2 == 'call2_hoge'
