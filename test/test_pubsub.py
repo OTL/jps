@@ -164,3 +164,20 @@ def test_pubsub_wildcard_suffix():
     assert len(holder.msgs) == 2
     assert 'data1' in holder.msgs
     assert 'data2' in holder.msgs
+
+
+
+def test_pubsub_serializer():
+    holder = MessageHolder()
+    def deserialize(msg):
+        return msg + '_deserialized'
+    def serialize(msg):
+        return msg + '_serialized'
+    sub = jps.Subscriber('/hoge_s', holder, deserializer=deserialize)
+    pub = jps.Publisher('/hoge_s', serializer=serialize)
+    time.sleep(0.1)
+    pub.publish('hoge')
+    time.sleep(0.1)
+    sub.spin_once()
+    assert len(holder.get_msg()) == 1
+    assert holder.get_msg()[0] == 'hoge_serialized_deserialized'
