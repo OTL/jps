@@ -1,7 +1,7 @@
 import zmq
 from .args import ArgumentParser
-from .common import DEFAULT_PUB_PORT
-from .common import DEFAULT_SUB_PORT
+from .env import get_pub_port
+from .env import get_sub_port
 
 
 def command():
@@ -10,13 +10,17 @@ def command():
     main(args.publisher_port, args.subscriber_port)
 
 
-def main(pub_port=DEFAULT_PUB_PORT, sub_port=DEFAULT_SUB_PORT):
+def main(pub_port=None, sub_port=None):
     '''main of forwarder
 
     :param sub_port: port for subscribers
     :param pub_port: port for publishers
     '''
     try:
+        if sub_port is None:
+            sub_port = get_sub_port()
+        if pub_port is None:
+            pub_port = get_pub_port()
         context = zmq.Context(1)
         frontend = context.socket(zmq.SUB)
         backend = context.socket(zmq.PUB)
