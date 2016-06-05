@@ -156,7 +156,7 @@ def test_pubsub_wildcard_suffix():
     pub1 = jps.Publisher('/hoge1')
     pub2 = jps.Publisher('/hoge2')
     pub3 = jps.Publisher('/hogi1')
-    time.sleep(0.01)
+    time.sleep(0.1)
     pub1.publish('data1')
     pub2.publish('data2')
     pub3.publish('data3')

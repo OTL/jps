@@ -1,5 +1,7 @@
+import multiprocessing
+import os
+import signal
 import time
-import threading
 
 import jps
 
@@ -13,9 +15,9 @@ class MessageHolder(object):
 
 
 def test_bridge():
-    t = threading.Thread(target=jps.forwarder.main, args=(55322, 55323))
-    t.setDaemon(True)
-    t.start()
+    forwarder_process = multiprocessing.Process(
+        target=jps.forwarder.main, args=(55322, 55323))
+    forwarder_process.start()
     time.sleep(0.1)
     b = jps.Bridge(('bridge1', 'bridge2', 'bridge3', 'bridge4'),
                    '.remote',
@@ -44,3 +46,5 @@ def test_bridge():
     rp2.publish('hoge4')
     assert ls1.next() == 'hoge3'
     assert ls2.next() == 'hoge4'
+    os.kill(forwarder_process.pid, signal.SIGINT)
+    forwarder_process.join(1.0)
