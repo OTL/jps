@@ -3,6 +3,7 @@ from .subscriber import Subscriber
 from .action import ActionClient
 from .action import ActionServer
 from .args import ArgumentParser
+from .bridge import Bridge
 from .common import DEFAULT_PUB_PORT
 from .common import DEFAULT_SUB_PORT
 from .common import DEFAULT_REQ_PORT
@@ -21,7 +22,7 @@ from . import env
 
 __all__ = ['Publisher', 'Subscriber', 'ArgumentParser',
            'ServiceServer', 'ServiceClient',
-           'ActionServer', 'ActionClient',
+           'ActionServer', 'ActionClient', 'Bridge',
            'forwarder', 'queue', 'master', 'utils', 'launcher', 'tools', 'env',
            'DEFAULT_PUB_PORT', 'DEFAULT_SUB_PORT', 'DEFAULT_HOST',
            'DEFAULT_REQ_PORT', 'DEFAULT_RES_PORT']
