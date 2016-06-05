@@ -181,3 +181,22 @@ def test_pubsub_serializer():
     sub.spin_once()
     assert len(holder.get_msg()) == 1
     assert holder.get_msg()[0] == 'hoge_serialized_deserialized'
+
+
+def test_pubsub_remap():
+    holder1 = MessageHolder()
+    holder2 = MessageHolder()
+    sub1 = jps.Subscriber('hogi', holder1)
+    sub2 = jps.Subscriber('bar', holder2)
+
+    os.environ['JPS_REMAP'] = 'hoge=hogi, foo= bar'
+    pub1 = jps.Publisher('hoge')
+    pub2 = jps.Publisher('foo')
+    time.sleep(0.1)
+    pub1.publish('hogea')
+    pub2.publish('hogeb')
+    time.sleep(0.1)
+    sub1.spin_once()
+    sub2.spin_once()
+    assert len(holder1.get_msg()) == 1
+    assert len(holder2.get_msg()) == 1

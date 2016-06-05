@@ -32,3 +32,13 @@ def get_default_deserializer():
     if serialize == 'json':
         return json.loads
     return None
+
+def get_remapped_topic_name(topic_name):
+    if 'JPS_REMAP' not in os.environ:
+        return topic_name
+    remaps = os.environ['JPS_REMAP'].split(',')
+    for remap in remaps:
+        original, renamed = remap.split('=')
+        if original.strip() == topic_name:
+            return renamed.strip()
+    return topic_name

@@ -8,7 +8,7 @@ from .env import get_master_host
 from .env import get_sub_port
 from .env import get_topic_suffix
 from .env import get_default_deserializer
-
+from .env import get_remapped_topic_name
 
 class Subscriber(object):
 
@@ -35,6 +35,7 @@ class Subscriber(object):
 
     def __init__(self, topic_name, callback=None, host=None, sub_port=None,
                  deserializer='DEFAULT'):
+        topic_name = get_remapped_topic_name(topic_name)
         if topic_name.count(' '):
             raise Exception('you can\'t use " " for topic_name')
         if host is None:
