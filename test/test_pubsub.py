@@ -137,8 +137,8 @@ def test_pubsub_near_names():
 
 def test_pubsub_multi():
     holder = MessageHolder()
-    sub = jps.Subscriber('/hoge1', holder)
-    pub = jps.Publisher('/hoge1')
+    sub = jps.Subscriber('/m_hoge1', holder)
+    pub = jps.Publisher('/m_hoge1')
     time.sleep(0.01)
     pub.publish('hoge0')
     pub.publish('hoge1')

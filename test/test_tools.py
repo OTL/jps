@@ -65,7 +65,7 @@ def test_show_list():
     time.sleep(0.1)
     p1.publish('{a}')
     p2.publish('{b}')
-
+    time.sleep(0.1)
     show_thread.join(2.0)
     assert list_output.getvalue() == '/test_topic1\n/test_topic2\n'
     list_output.close()
@@ -83,7 +83,7 @@ def test_show_list_with_suffix():
     time.sleep(0.1)
     p1.publish('{a}')
     p2.publish('{b}')
-
+    time.sleep(0.1)
     show_thread.join(2.0)
     assert list_output.getvalue() == '/test_topic1.r123\n/test_topic2.r123\n'
     list_output.close()

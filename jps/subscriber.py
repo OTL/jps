@@ -84,7 +84,7 @@ class Subscriber(object):
             else:
                 self._user_callback(self.deserialize(msg))
 
-    def spin_once(self):
+    def spin_once(self, polling_sec=0.010):
         '''Read the queued data and call the callback for them.
         You have to handle KeyboardInterrupt (\C-c) manually.
 
@@ -103,7 +103,7 @@ class Subscriber(object):
         '''
         # parse all data
         while True:
-            socks = dict(self._poller.poll(10))
+            socks = dict(self._poller.poll(polling_sec * 1000))
             if socks.get(self._socket) == zmq.POLLIN:
                 msg = self._socket.recv()
                 self._callback(msg)

@@ -75,8 +75,8 @@ def show_list(timeout_in_sec, out=sys.stdout, host=jps.env.get_master_host(), su
     sub = jps.Subscriber('*', store.callback, host=host, sub_port=sub_port)
     sleep_sec = 0.01
     for i in range(int(timeout_in_sec / sleep_sec)):
-        sub.spin_once()
-        time.sleep(sleep_sec)
+        sub.spin_once(sleep_sec)
+        time.sleep(0.001) # for context switch
     for name in store.get_topic_names():
         out.write('{}\n'.format(name))
 
