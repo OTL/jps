@@ -89,7 +89,7 @@ def test_show_list_with_suffix():
     list_output.close()
     os.environ['JPS_SUFFIX'] = orig_suffix
 
-def atest_recordplay():
+def test_recordplay():
     import tempfile
     import os
     file_path_all = '{0}/{1}{2}'.format(
