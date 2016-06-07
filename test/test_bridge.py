@@ -36,15 +36,16 @@ def test_bridge():
     assert rs2.next() == 'hoge2'
 
     # remote to local
-    rp1 = jps.Publisher('bridge3.remote', pub_port=55322)
-    rp2 = jps.Publisher('bridge4.remote', pub_port=55322)
+    rp1 = jps.Publisher('bridge3', pub_port=55322)
+    rp2 = jps.Publisher('bridge4', pub_port=55322)
     time.sleep(0.1)
-    ls1 = jps.Subscriber('bridge3')
-    ls2 = jps.Subscriber('bridge4')
+    ls1 = jps.Subscriber('bridge3.remote')
+    ls2 = jps.Subscriber('bridge4.remote')
     time.sleep(0.1)
     rp1.publish('hoge3')
     rp2.publish('hoge4')
     assert ls1.next() == 'hoge3'
     assert ls2.next() == 'hoge4'
+
     os.kill(forwarder_process.pid, signal.SIGINT)
     forwarder_process.join(1.0)
