@@ -166,6 +166,38 @@ def test_pubsub_wildcard_suffix():
     assert 'data2' in holder.msgs
 
 
+def test_pubsub_wildcard_suffix_with_normal_method_callback():
+    holder = MessageHolder()
+    sub = jps.Subscriber('bbbb.*', holder)
+    pub1 = jps.Publisher('bbbb.1')
+    pub2 = jps.Publisher('bbbb.2')
+    pub3 = jps.Publisher('bbbbb1') # not subscribed
+    time.sleep(0.1)
+    pub1.publish('data1')
+    pub2.publish('data2')
+    pub3.publish('data3')
+    sub.spin_once()
+    assert len(holder.get_msg()) == 2
+    assert 'data1' in holder.get_msg()
+    assert 'data2' in holder.get_msg()
+
+msg_data = []
+
+def test_pubsub_wildcard_suffix_with_normal_function_callback():
+    def callback(msg):
+        global msg_data
+        msg_data.append(msg)
+    sub = jps.Subscriber('abcde.*', callback)
+    pub1 = jps.Publisher('abcde.1')
+    pub2 = jps.Publisher('abcde.2')
+    pub3 = jps.Publisher('abcdeb1') # not subscribed
+    time.sleep(0.1)
+    pub1.publish('data1')
+    pub2.publish('data2')
+    pub3.publish('data3')
+    sub.spin_once()
+    assert len(msg_data) == 2
+
 
 def test_pubsub_serializer():
     holder = MessageHolder()

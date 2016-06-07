@@ -1,5 +1,6 @@
 import threading
 import time
+import types
 
 import zmq
 from zmq.utils.strtypes import cast_bytes
@@ -53,6 +54,20 @@ class Subscriber(object):
         self._topic_without_star = self._topic.rstrip('*')
         self._socket.setsockopt(zmq.SUBSCRIBE, self._topic_without_star)
         self._user_callback = callback
+        if type(callback) == types.MethodType:
+            self._user_callback_takes_topic_name = callback.im_func.func_code.co_argcount == 3 # arg=[self, message, topic_name]
+        elif type(callback) == types.FunctionType:
+            self._user_callback_takes_topic_name = callback.func_code.co_argcount == 2 # arg=[message, topic_name]
+        elif hasattr(callback, '__call__'):
+            self._user_callback_takes_topic_name = callback.__call__.im_func.func_code.co_argcount == 3 # arg=[self, message, topic_name]
+        else:
+            self._user_callback_takes_topic_name = False
+        print 'topic=' + self._topic
+        print 'true_false =' + str(self._user_callback_takes_topic_name)
+        print callback
+        print type(callback)
+        if type(callback) == types.InstanceType:
+            print 'argcoutn = ' + callback.func_code.co_argcount
         self._thread = None
         self._poller = zmq.Poller()
         self._poller.register(self._socket, zmq.POLLIN)
@@ -79,7 +94,7 @@ class Subscriber(object):
             return
         msg, topic_name = self._strip_topic_name_if_not_wildcard(raw_msg)
         if msg is not None:
-            if self.has_wildcard_in_topic():
+            if self._user_callback_takes_topic_name:
                 self._user_callback(self.deserialize(msg), topic_name)
             else:
                 self._user_callback(self.deserialize(msg))
@@ -126,7 +141,7 @@ class Subscriber(object):
 
     def _spin_internal(self):
         for msg in self:
-            if self.has_wildcard_in_topic():
+            if self._user_callback_takes_topic_name:
                 self._user_callback(*msg)
             else:
                 self._user_callback(self.deserialize(msg))
@@ -143,7 +158,7 @@ class Subscriber(object):
         msg, topic_name = self._strip_topic_name_if_not_wildcard(raw_msg)
         if msg is None:
             return self.next()
-        if self.has_wildcard_in_topic():
+        if self._user_callback_takes_topic_name:
             return (self.deserialize(msg), topic_name)
         else:
             return self.deserialize(msg)
