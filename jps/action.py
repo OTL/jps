@@ -73,7 +73,7 @@ class ActionClient(object):
     >>> import jps
     >>> import json
     >>> c = jps.ActionClient('move_to')
-    >>> future = c(json.dumps({x: 10.0, y: 0.1}))
+    >>> future = c(json.dumps({'x': 10.0, 'y': 0.1}))
     # do something if you are busy to do something during waiting.
     >>> result = future.wait()
     '''
