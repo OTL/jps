@@ -62,10 +62,6 @@ class Subscriber(object):
             self._user_callback_takes_topic_name = callback.__call__.im_func.func_code.co_argcount == 3 # arg=[self, message, topic_name]
         else:
             self._user_callback_takes_topic_name = False
-        print 'topic=' + self._topic
-        print 'true_false =' + str(self._user_callback_takes_topic_name)
-        print callback
-        print type(callback)
         if type(callback) == types.InstanceType:
             print 'argcoutn = ' + callback.func_code.co_argcount
         self._thread = None
