@@ -5,6 +5,7 @@ import types
 import zmq
 from zmq.utils.strtypes import cast_bytes
 
+from .common import Error
 from .env import get_master_host
 from .env import get_sub_port
 from .env import get_topic_suffix
@@ -40,7 +41,9 @@ class Subscriber(object):
                  deserializer='DEFAULT'):
         topic_name = get_remapped_topic_name(topic_name)
         if topic_name.count(' '):
-            raise Exception('you can\'t use " " for topic_name')
+            raise Error('you can\'t use " " for topic_name')
+        if topic_name == '':
+            raise Error('empty topic name is not supported')
         if host is None:
             host = get_master_host()
         if sub_port is None:
@@ -126,7 +129,7 @@ class Subscriber(object):
         '''
         if use_thread:
             if self._thread is not None:
-                raise 'spin called twice'
+                raise Error('spin called twice')
             self._thread = threading.Thread(target=self._spin_internal)
             self._thread.setDaemon(True)
             self._thread.start()

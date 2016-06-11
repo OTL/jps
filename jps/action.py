@@ -37,10 +37,14 @@ class ActionServer(object):
     >>> s.spin()
     '''
 
-    def __init__(self, base_topic_name, callback):
+    def __init__(self, base_topic_name, callback, host=None, pub_port=None,
+                 sub_port=None, serializer='DEFAULT', deserializer='DEFAULT'):
         self._req_subscriber = Subscriber(base_topic_name + REQUEST_SUFFIX,
-                                          self._request_callback)
-        self._res_publisher = Publisher(base_topic_name + RESPONSE_SUFFIX)
+                                          self._request_callback,
+                                          host=host, sub_port=sub_port,
+                                          deserializer=deserializer)
+        self._res_publisher = Publisher(base_topic_name + RESPONSE_SUFFIX,
+                                        host=host, pub_port=pub_port, serializer=serializer)
         self._user_callback = callback
 
     def _request_callback(self, msg):
@@ -82,9 +86,13 @@ class ActionClient(object):
     >>> result = future.wait()
     '''
 
-    def __init__(self, base_topic_name):
-        self._req_publisher = Publisher(base_topic_name + REQUEST_SUFFIX)
-        self._res_subscriber = Subscriber(base_topic_name + RESPONSE_SUFFIX)
+    def __init__(self, base_topic_name, host=None, pub_port=None,
+                 sub_port=None, serializer='DEFAULT', deserializer='DEFAULT'):
+        self._req_publisher = Publisher(base_topic_name + REQUEST_SUFFIX,
+                                        host=host, pub_port=pub_port, serializer=serializer)
+        self._res_subscriber = Subscriber(base_topic_name + RESPONSE_SUFFIX,
+                                          host=host, sub_port=sub_port,
+                                          deserializer=deserializer)
         self._str_for_hash = self.__str__()
 
     def _create_hash(self):

@@ -1,3 +1,4 @@
+from .common import Error
 from .publisher import Publisher
 from .subscriber import Subscriber
 
@@ -43,8 +44,8 @@ class Bridge(object):
         contain same names. It causes infinity loop.
         '''
         if len(set(set(upload_topic_names) & set(download_topic_names))) > 0:
-            raise Exception('upload_topic_names and download_topic_names should not' +
-                            'contain same names')
+            raise Error('upload_topic_names and download_topic_names should not' +
+                        'contain same names')
         self._bridges = []
         for topic in upload_topic_names:
             self._bridges.append(UploadSingleTopicBridge(
