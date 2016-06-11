@@ -15,10 +15,11 @@ class MessageHolder(object):
         self.saved_msg.append(msg)
 
 
-def test_bridge():
-    forwarder_process = multiprocessing.Process(
-        target=jps.forwarder.main, args=(55322, 55323))
-    forwarder_process.start()
+def test_bridge_with_launcher():
+    # Use launcher for the test of launcher
+    processes = jps.launcher.launch_modules(['jps.forwarder'],
+                                            {'jps.forwarder': (55322, 55323)},
+                                            kill_before_launch=True)
     time.sleep(0.1)
     b = jps.Bridge(('bridge1', 'bridge2'), ('bridge3', 'bridge4'),
                    remote_pub_port=55322, remote_sub_port=55323)
@@ -58,5 +59,5 @@ def test_bridge():
     ls1.spin_once()
     assert len(h1.saved_msg) == 0
 
-    os.kill(forwarder_process.pid, signal.SIGINT)
-    forwarder_process.join(1.0)
+    os.kill(processes[0].pid, signal.SIGINT)
+    processes[0].join(1.0)
