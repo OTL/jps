@@ -1,7 +1,9 @@
 import json
 
+
 def dict_to_obj(json_dict_or_list):
     class _obj(dict):
+
         def __init__(self, d):
             for a, b in d.iteritems():
                 setattr(self, a, dict_to_obj(b))

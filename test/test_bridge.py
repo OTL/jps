@@ -5,6 +5,7 @@ import time
 
 import jps
 
+
 class MessageHolder(object):
 
     def __init__(self):
@@ -30,7 +31,7 @@ def test_bridge():
     rs2 = jps.Subscriber('bridge2', sub_port=55323)
     h3 = MessageHolder()
     rs3 = jps.Subscriber('bridge3', h3, sub_port=55323)
-    
+
     time.sleep(0.1)
     lp1.publish('hoge1')
     lp2.publish('hoge2')
@@ -56,6 +57,6 @@ def test_bridge():
     assert ls4.next() == 'hoge4'
     ls1.spin_once()
     assert len(h1.saved_msg) == 0
-    
+
     os.kill(forwarder_process.pid, signal.SIGINT)
     forwarder_process.join(1.0)

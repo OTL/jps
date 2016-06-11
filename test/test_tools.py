@@ -70,6 +70,7 @@ def test_show_list():
     assert list_output.getvalue() == '/test_topic1\n/test_topic2\n'
     list_output.close()
 
+
 def test_show_list_with_suffix():
     list_output = StringIO()
     show_thread = Thread(target=jps.tools.show_list, args=(0.5, list_output))
@@ -88,6 +89,7 @@ def test_show_list_with_suffix():
     assert list_output.getvalue() == '/test_topic1.r123\n/test_topic2.r123\n'
     list_output.close()
     os.environ['JPS_SUFFIX'] = orig_suffix
+
 
 def test_recordplay():
     import tempfile

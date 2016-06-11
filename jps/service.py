@@ -7,6 +7,7 @@ from .env import get_master_host
 
 
 class ServiceServer(object):
+
     '''
     Example:
 
@@ -16,15 +17,17 @@ class ServiceServer(object):
     >>> service = jps.ServiceServer(callback)
     >>> service.spin()
     '''
+
     def __init__(self, callback, host=None, res_port=DEFAULT_RES_PORT):
         if host is None:
             host = get_master_host()
         context = zmq.Context()
         self._socket = context.socket(zmq.REP)
-        self._socket.connect('tcp://{host}:{port}'.format(host=host, port=res_port))
+        self._socket.connect(
+            'tcp://{host}:{port}'.format(host=host, port=res_port))
         self._callback = callback
         self._thread = None
-            
+
     def spin(self, use_thread=False):
         '''call callback for all data forever (until \C-c)
 
@@ -42,11 +45,10 @@ class ServiceServer(object):
     def _spin_internal(self):
         while True:
             self.spin_once()
-            
+
     def spin_once(self):
         request = self._socket.recv()
         self._socket.send(cast_bytes(self._callback(request)))
-
 
 
 class ServiceClient(object):
@@ -56,7 +58,8 @@ class ServiceClient(object):
             host = get_master_host()
         context = zmq.Context()
         self._socket = context.socket(zmq.REQ)
-        self._socket.connect('tcp://{host}:{port}'.format(host=host, port=req_port))
+        self._socket.connect(
+            'tcp://{host}:{port}'.format(host=host, port=req_port))
 
     def call(self, request):
         self._socket.send(request)

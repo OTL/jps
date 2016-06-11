@@ -11,7 +11,7 @@ class MessageHolder(object):
     def __call__(self, msg):
         self.saved_msg.append(msg)
 
-        
+
 def test_client():
     h = MessageHolder()
     c = jps.ActionClient('action0')
@@ -26,7 +26,7 @@ def test_client():
     assert req2.startswith('id=')
     assert req2.endswith('req2')
 
-    
+
 def test_server():
     def callback(msg):
         return msg + 'hoge'
@@ -41,7 +41,7 @@ def test_server():
     assert res.startswith('id=')
     assert res.endswith('req0hoge')
 
-    
+
 def test_server_client():
     def callback(msg):
         return msg + 'hoge'

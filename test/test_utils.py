@@ -24,7 +24,8 @@ def test_multi_pubsub_once():
     sub3 = jps.Subscriber('test_utils3', holder3)
     pub = jps.utils.JsonMultiplePublisher()
     time.sleep(0.1)
-    pub.publish('{"test_utils1": "hoge", "test_utils2": {"x": 3}, "test_utils3": 5}')
+    pub.publish(
+        '{"test_utils1": "hoge", "test_utils2": {"x": 3}, "test_utils3": 5}')
     time.sleep(0.1)
     sub1.spin_once()
     sub2.spin_once()
@@ -51,6 +52,8 @@ def test_to_obj():
     #   assert json == msg
 
 # todo
+
+
 def test_to_obj_list():
     msg = '["hoge", "hogi", {"atr1": "val2", "atr2": 1.0}]'
     bb = jps.utils.to_obj(msg)
@@ -62,6 +65,7 @@ def test_to_obj_list():
 #    json = bb.to_json()
 #    assert json == msg
 
+
 def test_to_obj_list():
     msg = '[{"hoge": 1}, {"hogi": 2}]'
     bb = jps.utils.to_obj(msg)
@@ -71,6 +75,7 @@ def test_to_obj_list():
 #  todo: list support
 #    json = bb.to_json()
 #    assert json == msg
+
 
 def test_to_obj_simple():
     msg = '{"aa": 1, "cc": 3, "bb": 2}'

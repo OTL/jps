@@ -1,6 +1,7 @@
 from multiprocessing import Process
 import importlib
 
+
 def launch_modules(module_names):
     '''launch module.main functions in another process'''
     processes = []

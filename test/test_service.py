@@ -2,7 +2,7 @@ import jps
 import json
 import time
 
-    
+
 def test_json_service():
     def json_callback(req):
         req = json.loads(req)
@@ -13,7 +13,7 @@ def test_json_service():
         elif type == 'b':
             add = req['add']
             return bytes(int(add) + 1)
-    
+
     service = jps.ServiceServer(json_callback)
     service.spin(use_thread=True)
     time.sleep(0.1)
@@ -22,7 +22,6 @@ def test_json_service():
     req2 = {'type': 'b', 'add': '2'}
     assert client(json.dumps(req1)) == 'xxxyyyxxx'
     assert client(json.dumps(req2)) == '3'
-    
+
 
 test_json_service()
-        

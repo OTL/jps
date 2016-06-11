@@ -171,7 +171,7 @@ def test_pubsub_wildcard_suffix_with_normal_method_callback():
     sub = jps.Subscriber('bbbb.*', holder)
     pub1 = jps.Publisher('bbbb.1')
     pub2 = jps.Publisher('bbbb.2')
-    pub3 = jps.Publisher('bbbbb1') # not subscribed
+    pub3 = jps.Publisher('bbbbb1')  # not subscribed
     time.sleep(0.1)
     pub1.publish('data1')
     pub2.publish('data2')
@@ -183,6 +183,7 @@ def test_pubsub_wildcard_suffix_with_normal_method_callback():
 
 msg_data = []
 
+
 def test_pubsub_wildcard_suffix_with_normal_function_callback():
     def callback(msg):
         global msg_data
@@ -190,7 +191,7 @@ def test_pubsub_wildcard_suffix_with_normal_function_callback():
     sub = jps.Subscriber('abcde.*', callback)
     pub1 = jps.Publisher('abcde.1')
     pub2 = jps.Publisher('abcde.2')
-    pub3 = jps.Publisher('abcdeb1') # not subscribed
+    pub3 = jps.Publisher('abcdeb1')  # not subscribed
     time.sleep(0.1)
     pub1.publish('data1')
     pub2.publish('data2')
@@ -201,8 +202,10 @@ def test_pubsub_wildcard_suffix_with_normal_function_callback():
 
 def test_pubsub_serializer():
     holder = MessageHolder()
+
     def deserialize(msg):
         return msg + '_deserialized'
+
     def serialize(msg):
         return msg + '_serialized'
     sub = jps.Subscriber('/hoge_s', holder, deserializer=deserialize)

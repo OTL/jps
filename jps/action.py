@@ -9,6 +9,7 @@ REQUEST_SUFFIX = '/request'
 RESPONSE_SUFFIX = '/response'
 ID_MESSAGE_DIVIDER = ' '
 
+
 def add_id_to_payload(id_str, payload_msg):
     return 'id={}{}{}'.format(id_str, ID_MESSAGE_DIVIDER, payload_msg)
 
@@ -35,6 +36,7 @@ class ActionServer(object):
     # subscribe 'move_to/request', publish 'move_to/response'
     >>> s.spin()
     '''
+
     def __init__(self, base_topic_name, callback):
         self._req_subscriber = Subscriber(base_topic_name + REQUEST_SUFFIX,
                                           self._request_callback)
@@ -54,6 +56,7 @@ class ActionServer(object):
 
 
 class ActionResponseWaiter(object):
+
     def __init__(self, target_id, subscriber):
         self._target_id = target_id
         self._subscriber = subscriber
@@ -64,8 +67,9 @@ class ActionResponseWaiter(object):
             if request_id == self._target_id:
                 return payload
 
-        
+
 class ActionClient(object):
+
     '''Call an action
 
     Example:
@@ -77,6 +81,7 @@ class ActionClient(object):
     # do something if you are busy to do something during waiting.
     >>> result = future.wait()
     '''
+
     def __init__(self, base_topic_name):
         self._req_publisher = Publisher(base_topic_name + REQUEST_SUFFIX)
         self._res_subscriber = Subscriber(base_topic_name + RESPONSE_SUFFIX)

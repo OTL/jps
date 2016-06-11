@@ -11,6 +11,7 @@ from .env import get_topic_suffix
 from .env import get_default_deserializer
 from .env import get_remapped_topic_name
 
+
 class Subscriber(object):
 
     '''Subscribe the topic and call the callback function
@@ -55,11 +56,11 @@ class Subscriber(object):
         self._socket.setsockopt(zmq.SUBSCRIBE, self._topic_without_star)
         self._user_callback = callback
         if type(callback) == types.MethodType:
-            self._user_callback_takes_topic_name = callback.im_func.func_code.co_argcount == 3 # arg=[self, message, topic_name]
+            self._user_callback_takes_topic_name = callback.im_func.func_code.co_argcount == 3  # arg=[self, message, topic_name]
         elif type(callback) == types.FunctionType:
-            self._user_callback_takes_topic_name = callback.func_code.co_argcount == 2 # arg=[message, topic_name]
+            self._user_callback_takes_topic_name = callback.func_code.co_argcount == 2  # arg=[message, topic_name]
         elif hasattr(callback, '__call__'):
-            self._user_callback_takes_topic_name = callback.__call__.im_func.func_code.co_argcount == 3 # arg=[self, message, topic_name]
+            self._user_callback_takes_topic_name = callback.__call__.im_func.func_code.co_argcount == 3  # arg=[self, message, topic_name]
         else:
             self._user_callback_takes_topic_name = False
         if type(callback) == types.InstanceType:
@@ -84,7 +85,7 @@ class Subscriber(object):
         if self._deserializer is not None:
             return self._deserializer(msg)
         return msg
-    
+
     def _callback(self, raw_msg):
         if self._user_callback is None:
             return

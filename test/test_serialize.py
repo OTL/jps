@@ -12,7 +12,7 @@ class MessageHolder(object):
     def __call__(self, msg):
         self.saved_msg.append(msg)
 
-    
+
 def test_pubsub_with_serialize_json():
     holder = MessageHolder()
     sub = jps.Subscriber('/serialize_hoge1', holder,

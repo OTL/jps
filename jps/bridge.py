@@ -3,6 +3,7 @@ from .subscriber import Subscriber
 
 
 class UploadSingleTopicBridge(object):
+
     def __init__(self, topic, remote_host=None, remote_pub_port=None):
         self._local_subscriber = Subscriber(topic, self.local_to_remote)
         self._remote_publisher = Publisher(topic, host=remote_host,
@@ -16,6 +17,7 @@ class UploadSingleTopicBridge(object):
 
 
 class DownloadSingleTopicBridge(object):
+
     def __init__(self, topic, remote_host=None, remote_sub_port=None):
         self._local_publisher = Publisher(topic)
         self._remote_subscriber = Subscriber(topic, self.remote_to_local,
@@ -30,16 +32,18 @@ class DownloadSingleTopicBridge(object):
 
 
 class Bridge(object):
-    def __init__(self, upload_topic_names, download_topic_names, remote_host=None,
+
+    def __init__(
+        self, upload_topic_names, download_topic_names, remote_host=None,
                  remote_pub_port=None, remote_sub_port=None):
         '''
         Pub/Sub in different jps network
 
-        upload_topic_names and download_topic_names should not 
+        upload_topic_names and download_topic_names should not
         contain same names. It causes infinity loop.
         '''
         if len(set(set(upload_topic_names) & set(download_topic_names))) > 0:
-            raise Exception('upload_topic_names and download_topic_names should not' + 
+            raise Exception('upload_topic_names and download_topic_names should not' +
                             'contain same names')
         self._bridges = []
         for topic in upload_topic_names:
