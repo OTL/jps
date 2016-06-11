@@ -33,6 +33,7 @@ class Subscriber(object):
     :param topic_name: topic name
     :param host: host name of publisher/forwarder
     :param sub_port: port of publisher/forwarder
+    :param deserializer: this function is applied after received (default: None)
     '''
 
     def __init__(self, topic_name, callback=None, host=None, sub_port=None,
@@ -69,13 +70,9 @@ class Subscriber(object):
         self._poller = zmq.Poller()
         self._poller.register(self._socket, zmq.POLLIN)
 
-    def has_wildcard_in_topic(self):
-        return (self._topic == '') or (self._topic != self._topic_without_star)
-
     def _strip_topic_name_if_not_wildcard(self, raw_msg):
         topic, _, msg = raw_msg.partition(' ')
-        # wildcard('')
-        if self.has_wildcard_in_topic():
+        if self._topic != self._topic_without_star:
             return (msg, topic)
         elif topic == self._topic:
             return (msg, topic)

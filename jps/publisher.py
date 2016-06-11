@@ -20,6 +20,7 @@ class Publisher(object):
     :param topic_name: Topic name
     :param host: host of subscriber/forwarder
     :param pub_port: port of subscriber/forwarder
+    :param serializer: this function is applied before publish (default: None)
     '''
 
     def __init__(self, topic_name, host=None, pub_port=None,
