@@ -16,12 +16,12 @@ Contents:
    :maxdepth: 4
 
    intro
-   simple_subscriber
    action
-   serializer
+   simple_subscriber
    tool
-   jps
    env
+   serializer
+   jps
 
 
 Indices and tables
