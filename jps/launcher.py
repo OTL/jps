@@ -1,4 +1,5 @@
 from multiprocessing import Process
+import getpass
 import importlib
 import os
 import signal
@@ -6,7 +7,7 @@ import tempfile
 
 
 def get_launched_module_pid_file(module_name):
-    return '{}/{}_jps_launch.pid'.format(tempfile.tempdir, module_name)
+    return '{}/{}_jps_launch.pid'.format(tempfile.gettempdir(), module_name)
 
 
 def kill_module(module_name):
@@ -24,20 +25,24 @@ def kill_module(module_name):
 
 
 def launch_modules(module_names, module_args={}, kill_before_launch=True):
+    launch_modules_with_names([[x, x + getpass.getuser()] for x in modules_with_names],
+                              module_args=module_args, kill_before_launch=kill_before_launch)
+    
+def launch_modules_with_names(modules_with_names, module_args={}, kill_before_launch=True):
     '''launch module.main functions in another process'''
     processes = []
     if kill_before_launch:
-        for module in module_names:
-            kill_module(module)
-    for module_name in module_names:
+        for module_name, name in modules_with_names:
+            kill_module(name)
+    for module_name, name in modules_with_names:
         m = importlib.import_module(module_name)
-        args = None
+        args = {}
         if module_name in module_args:
             args = module_args[module_name]
         p1 = Process(target=m.main, args=args)
         p1.daemon = True
         p1.start()
         processes.append(p1)
-        with open(get_launched_module_pid_file(module_name), 'w') as f:
+        with open(get_launched_module_pid_file(name), 'w') as f:
             f.write('{}'.format(p1.pid))
     return processes
