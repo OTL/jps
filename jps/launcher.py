@@ -25,7 +25,7 @@ def kill_module(module_name):
 
 
 def launch_modules(module_names, module_args={}, kill_before_launch=True):
-    launch_modules_with_names([[x, x + getpass.getuser()] for x in modules_with_names],
+    launch_modules_with_names([[x, x + getpass.getuser()] for x in module_names],
                               module_args=module_args, kill_before_launch=kill_before_launch)
     
 def launch_modules_with_names(modules_with_names, module_args={}, kill_before_launch=True):
