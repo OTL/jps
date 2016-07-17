@@ -44,7 +44,8 @@ def test_json_service_with_security():
                          args=(req_port, res_port, use_security))
     p.daemon = True
     p.start()
-    service = jps.ServiceServer(json_callback, res_port=res_port, use_security=use_security)
+    service = jps.ServiceServer(
+        json_callback, res_port=res_port, use_security=use_security)
     service.spin(use_thread=True)
     client = jps.ServiceClient(req_port=req_port, use_security=use_security)
     req1 = {'type': 'a', 'data': 'yyy'}

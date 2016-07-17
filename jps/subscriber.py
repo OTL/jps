@@ -60,11 +60,14 @@ class Subscriber(object):
         self._socket.setsockopt(zmq.SUBSCRIBE, self._topic_without_star)
         self._user_callback = callback
         if type(callback) == types.MethodType:
-            self._user_callback_takes_topic_name = callback.im_func.func_code.co_argcount == 3  # arg=[self, message, topic_name]
+            # arg=[self, message, topic_name]
+            self._user_callback_takes_topic_name = callback.im_func.func_code.co_argcount == 3
         elif type(callback) == types.FunctionType:
-            self._user_callback_takes_topic_name = callback.func_code.co_argcount == 2  # arg=[message, topic_name]
+            # arg=[message, topic_name]
+            self._user_callback_takes_topic_name = callback.func_code.co_argcount == 2
         elif hasattr(callback, '__call__'):
-            self._user_callback_takes_topic_name = callback.__call__.im_func.func_code.co_argcount == 3  # arg=[self, message, topic_name]
+            # arg=[self, message, topic_name]
+            self._user_callback_takes_topic_name = callback.__call__.im_func.func_code.co_argcount == 3
         else:
             self._user_callback_takes_topic_name = False
         if type(callback) == types.InstanceType:

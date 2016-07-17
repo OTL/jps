@@ -35,8 +35,8 @@ class DownloadSingleTopicBridge(object):
 class Bridge(object):
 
     def __init__(
-        self, upload_topic_names, download_topic_names, remote_host=None,
-                 remote_pub_port=None, remote_sub_port=None):
+            self, upload_topic_names, download_topic_names, remote_host=None,
+            remote_pub_port=None, remote_sub_port=None):
         '''
         Pub/Sub in different jps network
 

@@ -169,13 +169,13 @@ def topic_command():
     echo_parser.add_argument('topic_name', type=str, help='name of topic')
     echo_parser.add_argument(
         '--num', '-n', help='print N times and exit', type=int,
-                             default=None)
+        default=None)
 
     list_parser = command_parsers.add_parser(
         'list', help='show topic list', parents=[sub_common_parser])
     list_parser.add_argument(
         '--timeout', '-t', help='timeout in sec', type=float,
-                             default=1.0)
+        default=1.0)
 
     record_parser = command_parsers.add_parser(
         'record', help='record topic data', parents=[sub_common_parser])
@@ -183,7 +183,7 @@ def topic_command():
                                help='topic names to be recorded', type=str)
     record_parser.add_argument(
         '--file', '-f', help='output file name (default: record.json)',
-                               type=str, default='record.json')
+        type=str, default='record.json')
 
     play_parser = command_parsers.add_parser(
         'play', help='play recorded topic data', parents=[pub_common_parser])
