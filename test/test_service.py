@@ -44,6 +44,9 @@ def test_json_service_with_security():
                 args=(req_port, res_port, use_security))
     p.daemon = True
     p.start()
+    while not os.path.exists('certificates/server.key_secret'):
+        time.sleep(0.1)
+    time.sleep(0.5)
     service = jps.ServiceServer(
         json_callback, res_port=res_port, use_security=use_security)
     service.spin(use_thread=True)
