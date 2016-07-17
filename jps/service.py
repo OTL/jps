@@ -24,7 +24,7 @@ class ServiceServer(object):
         self._socket = context.socket(zmq.REP)
         self._auth = None
         if use_security:
-            self._auth = Authenticator(env.get_server_public_key_dir())
+            self._auth = Authenticator.instance(env.get_server_public_key_dir())
             self._auth.set_server_key(
                 self._socket, env.get_server_secret_key_path())
 
@@ -71,7 +71,7 @@ class ServiceClient(object):
         self._socket = context.socket(zmq.REQ)
         self._auth = None
         if use_security:
-            self._auth = Authenticator(env.get_server_public_key_dir())
+            self._auth = Authenticator.instance(env.get_server_public_key_dir())
             self._auth.set_client_key(self._socket, env.get_client_secret_key_path(),
                                       env.get_server_public_key_path())
 

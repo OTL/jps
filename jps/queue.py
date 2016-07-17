@@ -33,7 +33,7 @@ def main(req_port=None, res_port=None, use_security=False):
         if use_security:
             if not os.path.exists(env.get_server_public_key_dir()):
                 create_certificates(env.get_server_public_key_dir())
-            auth = Authenticator(env.get_server_public_key_dir())
+            auth = Authenticator.instance(env.get_server_public_key_dir())
             auth.set_server_key(
                 frontend_service, env.get_server_secret_key_path())
             auth.set_client_key(backend_service, env.get_client_secret_key_path(),
