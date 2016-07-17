@@ -61,3 +61,56 @@ def test_bridge_with_launcher():
 
     os.kill(processes[0].pid, signal.SIGINT)
     processes[0].join(1.0)
+
+
+def test_bridge_server():
+    processes = jps.launcher.launch_modules(['jps.forwarder', 'jps.queue'],
+                                            {'jps.forwarder': (56322, 56323),
+                                             'jps.queue': (56324, 56325)},
+                                            kill_before_launch=True)
+
+    s = jps.BridgeServiceServer(('bridge_s3', 'bridge_s4'),
+                                pub_port=56322, sub_port=56323, res_port=56325)
+    c = jps.BridgeServiceClient(('bridge_s1', 'bridge_s2'), req_port=56324)
+
+    s.spin(use_thread=True)
+    c.spin(use_thread=True)
+    # local to remote
+    lp1 = jps.Publisher('bridge_s1')
+    lp2 = jps.Publisher('bridge_s2')
+    time.sleep(0.1)
+    rs1 = jps.Subscriber('bridge_s1', sub_port=56323)
+    rs2 = jps.Subscriber('bridge_s2', sub_port=56323)
+    h3 = MessageHolder()
+    rs3 = jps.Subscriber('bridge_s3', h3, sub_port=56323)
+
+    time.sleep(0.1)
+    lp1.publish('{"hoge1" : 2}')
+    lp2.publish('{"hoge2" : 3}')
+
+    assert rs1.next() == '{"hoge1" : 2}'
+    assert rs2.next() == '{"hoge2" : 3}'
+    rs3.spin_once()
+    assert len(h3.saved_msg) == 0
+
+    # remote to local
+    rp1 = jps.Publisher('bridge_s1', pub_port=56322)
+    rp3 = jps.Publisher('bridge_s3', pub_port=56322)
+    rp4 = jps.Publisher('bridge_s4', pub_port=56322)
+    time.sleep(0.1)
+    h1 = MessageHolder()
+    ls1 = jps.Subscriber('bridge_s1', h1)
+    ls3 = jps.Subscriber('bridge_s3')
+    ls4 = jps.Subscriber('bridge_s4')
+    time.sleep(0.1)
+    rp1.publish('hoge1')
+    rp3.publish('hoge3')
+    rp4.publish('hoge4')
+    assert ls3.next() == 'hoge3'
+    assert ls4.next() == 'hoge4'
+    ls1.spin_once()
+    assert len(h1.saved_msg) == 0
+    s.close()
+    for p in processes:
+        os.kill(p.pid, signal.SIGINT)
+        p.join(1.0)

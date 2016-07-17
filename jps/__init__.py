@@ -4,6 +4,8 @@ from .action import ActionClient
 from .action import ActionServer
 from .args import ArgumentParser
 from .bridge import Bridge
+from .bridge import BridgeServiceServer
+from .bridge import BridgeServiceClient
 from .common import Error
 from .common import DEFAULT_PUB_PORT
 from .common import DEFAULT_SUB_PORT
@@ -25,7 +27,9 @@ from . import env
 __all__ = ['Publisher', 'Subscriber', 'ArgumentParser',
            'Authenticator', 'create_certificates',
            'ServiceServer', 'ServiceClient',
-           'ActionServer', 'ActionClient', 'Bridge', 'Error',
+           'ActionServer', 'ActionClient', 'Bridge',
+           'BridgeServiceServer', 'BridgeServiceClient',
+           'Error',
            'forwarder', 'queue', 'master', 'utils', 'launcher', 'tools', 'env',
            'DEFAULT_PUB_PORT', 'DEFAULT_SUB_PORT', 'DEFAULT_HOST',
            'DEFAULT_REQ_PORT', 'DEFAULT_RES_PORT']

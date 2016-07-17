@@ -24,7 +24,8 @@ class ServiceServer(object):
         self._socket = context.socket(zmq.REP)
         self._auth = None
         if use_security:
-            self._auth = Authenticator.instance(env.get_server_public_key_dir())
+            self._auth = Authenticator.instance(
+                env.get_server_public_key_dir())
             self._auth.set_server_key(
                 self._socket, env.get_server_secret_key_path())
 
@@ -34,6 +35,7 @@ class ServiceServer(object):
             'tcp://{host}:{port}'.format(host=host, port=res_port))
         self._callback = callback
         self._thread = None
+        self._lock = threading.Lock()
 
     def spin(self, use_thread=False):
         '''call callback for all data forever (until \C-c)
@@ -54,12 +56,25 @@ class ServiceServer(object):
             self.spin_once()
 
     def spin_once(self):
-        request = self._socket.recv()
-        self._socket.send(cast_bytes(self._callback(request)))
+        with self._lock:
+            request = self._socket.recv()
+            self._socket.send(cast_bytes(self._callback(request)))
 
-    def __del__(self):
+    def _stop_if_running(self):
         if self._auth is not None:
             self._auth.stop()
+            self._auth = None
+        if self._thread is not None:
+            self._thread.join(1.0)
+            self._thread = None
+
+    def close(self):
+        self._stop_if_running()
+        with self._lock:
+            self._socket.close()
+
+    def __del__(self):
+        self._stop_if_running()
 
 
 class ServiceClient(object):
@@ -71,7 +86,8 @@ class ServiceClient(object):
         self._socket = context.socket(zmq.REQ)
         self._auth = None
         if use_security:
-            self._auth = Authenticator.instance(env.get_server_public_key_dir())
+            self._auth = Authenticator.instance(
+                env.get_server_public_key_dir())
             self._auth.set_client_key(self._socket, env.get_client_secret_key_path(),
                                       env.get_server_public_key_path())
 
