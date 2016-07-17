@@ -4,6 +4,8 @@ import os
 from .common import DEFAULT_HOST
 from .common import DEFAULT_PUB_PORT
 from .common import DEFAULT_SUB_PORT
+from .common import DEFAULT_RES_PORT
+from .common import DEFAULT_REQ_PORT
 
 
 def get_topic_suffix():
@@ -24,6 +26,14 @@ def get_pub_port():
 
 def get_sub_port():
     return os.environ.get('JPS_MASTER_SUB_PORT', DEFAULT_SUB_PORT)
+
+
+def get_res_port():
+    return os.environ.get('JPS_MASTER_RES_PORT', DEFAULT_RES_PORT)
+
+
+def get_req_port():
+    return os.environ.get('JPS_MASTER_REQ_PORT', DEFAULT_REQ_PORT)
 
 
 def get_default_serializer():

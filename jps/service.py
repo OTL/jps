@@ -1,9 +1,9 @@
 import zmq
 from zmq.utils.strtypes import cast_bytes
 import threading
-from .common import DEFAULT_RES_PORT
-from .common import DEFAULT_REQ_PORT
 from .env import get_master_host
+from .env import get_res_port
+from .env import get_req_port
 
 
 class ServiceServer(object):
@@ -18,11 +18,13 @@ class ServiceServer(object):
     >>> service.spin()
     '''
 
-    def __init__(self, callback, host=None, res_port=DEFAULT_RES_PORT):
+    def __init__(self, callback, host=None, res_port=None):
         if host is None:
             host = get_master_host()
         context = zmq.Context()
         self._socket = context.socket(zmq.REP)
+        if res_port is None:
+            res_port = get_res_port()
         self._socket.connect(
             'tcp://{host}:{port}'.format(host=host, port=res_port))
         self._callback = callback
@@ -53,11 +55,13 @@ class ServiceServer(object):
 
 class ServiceClient(object):
 
-    def __init__(self, host=None, req_port=DEFAULT_REQ_PORT):
+    def __init__(self, host=None, req_port=None):
         if host is None:
             host = get_master_host()
         context = zmq.Context()
         self._socket = context.socket(zmq.REQ)
+        if req_port is None:
+            req_port = get_req_port()
         self._socket.connect(
             'tcp://{host}:{port}'.format(host=host, port=req_port))
 

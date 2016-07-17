@@ -1,7 +1,7 @@
 import zmq
 from .args import ArgumentParser
-from .common import DEFAULT_REQ_PORT
-from .common import DEFAULT_RES_PORT
+from .env import get_res_port
+from .env import get_req_port
 
 
 def command():
@@ -11,12 +11,17 @@ def command():
     main(args.request_port, args.response_port)
 
 
-def main(req_port=DEFAULT_REQ_PORT, res_port=DEFAULT_RES_PORT):
+def main(req_port=None, res_port=None):
     '''main of queue
 
     :param req_port: port for clients
     :param res_port: port for servers
     '''
+    if req_port is None:
+        req_port = get_req_port()
+    if res_port is None:
+        res_port = get_res_port()
+
     try:
         context = zmq.Context(1)
         frontend_service = context.socket(zmq.XREP)
