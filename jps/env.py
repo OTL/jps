@@ -59,3 +59,30 @@ def get_remapped_topic_name(topic_name):
         if original.strip() == topic_name:
             return renamed.strip()
     return topic_name
+
+
+def get_use_service_security():
+    if 'JPS_USE_SECURITY' not in os.environ:
+        return False
+    val = os.environ['JPS_USE_SERVICE_SECURITY']
+    return val in ['yes', 'true', 'True', 'YES']
+
+
+def get_server_public_key_dir():
+    return os.environ.get('JPS_SERVER_PUBLIC_KEY_DIR',
+                          'certificates')
+
+
+def get_server_secret_key_path():
+    return os.environ.get('JPS_SERVER_SECRET_KEY_PATH',
+                          'certificates/server.key_secret')
+
+
+def get_client_secret_key_path():
+    return os.environ.get('JPS_CLIENT_SECRET_KEY_PATH',
+                          'certificates/client.key_secret')
+
+
+def get_server_public_key_path():
+    return os.environ.get('JPS_SERVER_PUBLIC_KEY_PATH',
+                          'certificates/server.key')

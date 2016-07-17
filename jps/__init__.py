@@ -10,6 +10,8 @@ from .common import DEFAULT_SUB_PORT
 from .common import DEFAULT_REQ_PORT
 from .common import DEFAULT_RES_PORT
 from .common import DEFAULT_HOST
+from .security import Authenticator
+from .security import create_certificates
 from .service import ServiceServer
 from .service import ServiceClient
 from . import forwarder
@@ -20,8 +22,8 @@ from . import utils
 from . import launcher
 from . import env
 
-
 __all__ = ['Publisher', 'Subscriber', 'ArgumentParser',
+           'Authenticator', 'create_certificates',
            'ServiceServer', 'ServiceClient',
            'ActionServer', 'ActionClient', 'Bridge', 'Error',
            'forwarder', 'queue', 'master', 'utils', 'launcher', 'tools', 'env',

@@ -1,9 +1,8 @@
 import zmq
 from zmq.utils.strtypes import cast_bytes
 import threading
-from .env import get_master_host
-from .env import get_res_port
-from .env import get_req_port
+from . import env
+from .security import Authenticator
 
 
 class ServiceServer(object):
@@ -18,13 +17,19 @@ class ServiceServer(object):
     >>> service.spin()
     '''
 
-    def __init__(self, callback, host=None, res_port=None):
+    def __init__(self, callback, host=None, res_port=None, use_security=False):
         if host is None:
-            host = get_master_host()
+            host = env.get_master_host()
         context = zmq.Context()
         self._socket = context.socket(zmq.REP)
+        self._auth = None
+        if use_security:
+            self._auth = Authenticator(env.get_server_public_key_dir())
+            self._auth.set_server_key(
+                self._socket, env.get_server_secret_key_path())
+
         if res_port is None:
-            res_port = get_res_port()
+            res_port = env.get_res_port()
         self._socket.connect(
             'tcp://{host}:{port}'.format(host=host, port=res_port))
         self._callback = callback
@@ -52,16 +57,26 @@ class ServiceServer(object):
         request = self._socket.recv()
         self._socket.send(cast_bytes(self._callback(request)))
 
+    def __del__(self):
+        if self._auth is not None:
+            self._auth.stop()
+
 
 class ServiceClient(object):
 
-    def __init__(self, host=None, req_port=None):
+    def __init__(self, host=None, req_port=None, use_security=False):
         if host is None:
-            host = get_master_host()
+            host = env.get_master_host()
         context = zmq.Context()
         self._socket = context.socket(zmq.REQ)
+        self._auth = None
+        if use_security:
+            self._auth = Authenticator(env.get_server_public_key_dir())
+            self._auth.set_client_key(self._socket, env.get_client_secret_key_path(),
+                                      env.get_server_public_key_path())
+
         if req_port is None:
-            req_port = get_req_port()
+            req_port = env.get_req_port()
         self._socket.connect(
             'tcp://{host}:{port}'.format(host=host, port=req_port))
 
@@ -70,3 +85,7 @@ class ServiceClient(object):
         return self._socket.recv()
 
     __call__ = call
+
+    def __del__(self):
+        if self._auth is not None:
+            self._auth.stop()

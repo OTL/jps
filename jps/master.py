@@ -6,10 +6,11 @@ import signal
 from .args import ArgumentParser
 from . import forwarder
 from . import queue
-from .common import DEFAULT_PUB_PORT
-from .common import DEFAULT_SUB_PORT
-from .common import DEFAULT_REQ_PORT
-from .common import DEFAULT_RES_PORT
+from .env import get_pub_port
+from .env import get_sub_port
+from .env import get_req_port
+from .env import get_res_port
+from .env import get_use_service_security
 
 
 def command():
@@ -19,24 +20,18 @@ def command():
          args.publisher_port, args.subscriber_port)
 
 
-def main(req_port=DEFAULT_REQ_PORT, res_port=DEFAULT_RES_PORT,
-         pub_port=DEFAULT_PUB_PORT, sub_port=DEFAULT_SUB_PORT):
-    p1 = Process(target=queue.main, args=(req_port, res_port))
-#    p2 = Process(target=forwarder.main, args=(pub_port, sub_port))
+def main(req_port=None, res_port=None,
+         pub_port=None, sub_port=None):
+    if req_port is None:
+        req_port = get_req_port()
+    if res_port is None:
+        res_port = get_res_port()
+    if pub_port is None:
+        pub_port = get_pub_port()
+    if sub_port is None:
+        sub_port = get_sub_port()
+    p1 = Process(target=queue.main, args=(
+        req_port, res_port, get_use_service_security()))
     p1.start()
     forwarder.main(pub_port, sub_port)
     p1.join()
-#    p2.start()
-#    try:
-#        p1.join()
-#        p2.join()
-#    except:
-#        pass
-#    finally:
-#        os.kill(p1.pid, signal.SIGINT)
-#        os.kill(p2.pid, signal.SIGINT)
-
-#    p1 = threading.Thread(target=queue.main, args=(req_port, res_port))
-#    p1.setDaemon(True)
-#    p1.start()
-#    forwarder.main(pub_port, sub_port)
