@@ -4,6 +4,11 @@ import zmq
 import zmq.auth
 from zmq.auth.thread import ThreadAuthenticator
 
+def load_and_set_key(zmq_socket, key_path):
+    public, secret = zmq.auth.load_certificate(key_path)
+    zmq_socket.curve_secretkey = secret
+    zmq_socket.curve_publickey = public
+
 
 class Authenticator(object):
 
@@ -15,18 +20,12 @@ class Authenticator(object):
 
     def set_server_key(self, zmq_socket, server_secret_key_path):
         '''must call before bind'''
-        server_public, server_secret = zmq.auth.load_certificate(
-            server_secret_key_path)
-        zmq_socket.curve_secretkey = server_secret
-        zmq_socket.curve_publickey = server_public
+        load_and_set_key(zmq_socket, server_secret_key_path)
         zmq_socket.curve_server = True
 
     def set_client_key(self, zmq_socket, client_secret_key_path, server_public_key_path):
         '''must call before bind'''
-        client_public, client_secret = zmq.auth.load_certificate(
-            client_secret_key_path)
-        zmq_socket.curve_secretkey = client_secret
-        zmq_socket.curve_publickey = client_public
+        load_and_set_key(zmq_socket, client_secret_key_path)
         server_public, _ = zmq.auth.load_certificate(server_public_key_path)
         zmq_socket.curve_serverkey = server_public
 
