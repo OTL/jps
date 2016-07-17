@@ -36,8 +36,8 @@ def test_json_service_with_security():
         elif type == 'b':
             add = req['add']
             return bytes(int(add) + 1)
-    res_port = jps.env.get_res_port() + 10
-    req_port = jps.env.get_req_port() + 10
+    res_port = jps.env.get_res_port() + 100
+    req_port = jps.env.get_req_port() + 100
     use_security = True
     import threading
     p = threading.Thread(target=jps.queue.main,
