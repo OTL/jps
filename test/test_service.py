@@ -39,9 +39,9 @@ def test_json_service_with_security():
     res_port = jps.env.get_res_port() + 100
     req_port = jps.env.get_req_port() + 100
     use_security = True
-    import threading
-    p = threading.Thread(target=jps.queue.main,
-                         args=(req_port, res_port, use_security))
+    from multiprocessing import Process
+    p = Process(target=jps.queue.main,
+                args=(req_port, res_port, use_security))
     p.daemon = True
     p.start()
     service = jps.ServiceServer(
@@ -52,4 +52,5 @@ def test_json_service_with_security():
     req2 = {'type': 'b', 'add': '2'}
     assert client(json.dumps(req1)) == 'xxxyyyxxx'
     assert client(json.dumps(req2)) == '3'
+    os.kill(p.pid, signal.SIGINT)
     p.join(1.0)
